@@ -1,0 +1,97 @@
+# Copyright (c) 2010, 2012, 2013, 2014
+#	Thorsten Glaser <tg@mirbsd.org>
+# This file is provided under the same terms as mksh.
+#-
+# Minimal /system/etc/mkshrc for Android
+#
+# Support: https://launchpad.net/mksh
+
+set +o nohup
+
+if (( USER_ID )); then PS1='$'; else PS1='#'; fi
+PS4='[$EPOCHREALTIME] '; PS1='${|
+	local e=$?
+
+	(( e )) && REPLY+="$e|"
+
+	return $e
+}$HOSTNAME:${PWD:-?} '"$PS1 "
+
+export host=android
+export HOME=/
+export HOSTNAME=$(getprop ro.product.device)
+export LOL="your mom"
+export TERM=xterm-256color
+export TMPDIR=/data/local/tmp
+export USER=$(id -un)
+export TERMUX=/data/data/com.termux/files/usr
+export BBDIR="/sbin/.magisk/busybox"
+export PATH=${PATH}:/sbin:${BBDIR}:${TERMUX}/bin:${TERMUX}/applets.
+export LD_LIBRARY_PATH=${TERMUX}/lib
+
+# Termux environment
+SHELL=/data/data/com.termux/files/usr/bin/bash
+COLORTERM=truecolor
+HISTCONTROL=ignoreboth
+PREFIX=${TERMUX}
+JAVA_HOME=${TERMUX}/opt/openjdk
+TERMUX_IS_DEBUGGABLE_BUILD=0
+TERMUX_MAIN_PACKAGE_FORMAT=debian
+PWD=/
+TERMUX_VERSION=0.118.0
+EXTERNAL_STORAGE=/sdcard
+LD_PRELOAD=${TERMUX}/lib/libtermux-exec.so
+LANG=en_US.UTF-8
+TERMUX_APK_RELEASE=F_DROID
+DEX2OATBOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar
+ANDROID_DATA=/data
+ANDROID_I18N_ROOT=/apex/com.android.i18n
+SHLVL=1
+ANDROID_ROOT=/system
+BOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar:/apex/com.android.appsearch/javalib/framework-appsearch.jar:/apex/com.android.conscrypt/javalib/conscrypt.jar:/apex/com.android.ipsec/javalib/android.net.ipsec.ike.jar:/apex/com.android.media/javalib/updatable-media.jar:/apex/com.android.mediaprovider/javalib/framework-mediaprovider.jar:/apex/com.android.os.statsd/javalib/framework-statsd.jar:/apex/com.android.permission/javalib/framework-permission.jar:/apex/com.android.permission/javalib/framework-permission-s.jar:/apex/com.android.scheduling/javalib/framework-scheduling.jar:/apex/com.android.sdkext/javalib/framework-sdkextensions.jar:/apex/com.android.tethering/javalib/framework-connectivity.jar:/apex/com.android.tethering/javalib/framework-tethering.jar:/apex/com.android.wifi/javalib/framework-wifi.jar
+ANDROID_TZDATA_ROOT=/apex/com.android.tzdata
+TERMUX_APP_PID=25811
+PATH=/data/data/com.termux/files/usr/bin
+ANDROID_ART_ROOT=/apex/com.android.art
+_=${TERMUX}/bin/printenv
+
+alias bb='$BBDIR/busybox'
+alias bsu='su -s bash'
+alias l='bb ls --group-directories-first'
+alias la='l -A'
+alias ll='l -l'
+alias lo='l -al'
+alias ls='ls --color=auto'
+alias nano='nano -l'
+alias sudo='su -c "$@"'
+alias sysro='mount -o remount,ro /'
+alias sysrw='mount -o remount,rw /'
+alias vd='cd'
+alias flashOn='flashlight 1'
+alias flashOff='flashlight 0'
+
+flashlight() {
+  toggle=$(cat /sys/class/leds/led:switch_0/brightness)
+  if [ "$toggle" = "0" ];then
+    echo 30 > /sys/class/leds/led:torch_0/brightness
+    echo 30 > /sys/class/leds/led:torch_3/brightness
+    echo 1 > /sys/class/leds/led:switch_0/brightness
+    echo "on"
+  else
+    echo 0 > /sys/class/leds/led:torch_0/brightness
+    echo 0 > /sys/class/leds/led:torch_3/brightness
+    echo 0 > /sys/class/leds/led:switch_0/brightness
+    echo "off"
+  fi
+}
+
+flashbang() {
+  i=1
+  value=$@
+  while [ $i -le ${value:=100} ]
+    do
+    flashlight 1
+    flashlight 0
+    i=$(($i+1))
+  done
+}
