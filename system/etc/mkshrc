@@ -1,59 +1,73 @@
-# Copyright (c) 2010, 2012, 2013, 2014
-#	Thorsten Glaser <tg@mirbsd.org>
+#!/system/bin/sh
+# Copyright (c) 2010
+#	Thorsten Glaser <t.glaser@tarent.de>
 # This file is provided under the same terms as mksh.
 #-
 # Minimal /system/etc/mkshrc for Android
-#
-# Support: https://launchpad.net/mksh
 
-set +o nohup
+export TERMUX=/data/data/com.termux/files
+export LD_LIBRARY_PATH=${TERMUX}/usr/lib
+export SHELL=/data/data/com.termux/files/usr/bin/bash
 
+: ${TERM:=xterm-256color} ${HOME:=/} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android}
+: ${SHELL:=$MKSH} ${USER:=$(getprop ro.product.device)}
 if (( USER_ID )); then PS1='$'; else PS1='#'; fi
-PS4='[$EPOCHREALTIME] '; PS1='${|
-	local e=$?
 
-	(( e )) && REPLY+="$e|"
+echo "You're now SuperUser, here some tools"
+echo "-flashOn              \t Turn on flashlight."
+echo "-flashOff	            \t Turn off flashlight."
+echo "-flashlight [0/1]     \t Turn flashlight on or off."
+echo "-flashbang [100]      \t Starts an flashbang, default is 100 (not supported by all devices)."
+echo "-sys[rw/ro]           \t Mounts system as Read-Write or Read-Only."
+echo "-devicefetch [distro] \t Displays neofetch (requires neofetch)."
 
-	return $e
-}$HOSTNAME:${PWD:-?} '"$PS1 "
+PS1='$(echo -e "\e[32m${USER}@${HOSTNAME}\033[m"):$(echo -e "\e[34m~${PWD:-?}\033[m") '"$PS1 "
+if [ -d "/sbin/.magisk/busybox" ]; then
+  BBDIR="/sbin/.magisk/busybox"
+elif [ -d "/sbin/.core/busybox" ]; then
+  BBDIR="/sbin/.core/busybox"
+fi
+PATH=${PATH}:/sbin:${BBDIR}:${TERMUX}/usr/bin:${TERMUX}/usr/bin/applets:${TERMUX}/home/.bin.
+export TERM HOME MKSH HOSTNAME SHELL USER PATH
+# Place your own aliases in <SDCARD>/.aliases for ease.
+
+for p in ~/.bin; do
+	[[ -d $p/. ]] || continue
+	[[ :$PATH: = *:$p:* ]] || PATH=$p:$PATH
+done
+
+unset p
+
+if [ -f "<SDCARD>/.aliases" ]; then
+  . "<SDCARD>/.aliases"
+fi
 
 export host=android
-export HOME=/
-export HOSTNAME=$(getprop ro.product.device)
 export LOL="your mom"
-export TERM=xterm-256color
 export TMPDIR=/data/local/tmp
-export USER=$(id -un)
-export TERMUX=/data/data/com.termux/files/usr
-export BBDIR="/sbin/.magisk/busybox"
-export PATH=${PATH}:/sbin:${BBDIR}:${TERMUX}/bin:${TERMUX}/applets.
-export LD_LIBRARY_PATH=${TERMUX}/lib
 
 # Termux environment
-SHELL=/data/data/com.termux/files/usr/bin/bash
-COLORTERM=truecolor
-HISTCONTROL=ignoreboth
-PREFIX=${TERMUX}
-JAVA_HOME=${TERMUX}/opt/openjdk
-TERMUX_IS_DEBUGGABLE_BUILD=0
-TERMUX_MAIN_PACKAGE_FORMAT=debian
-PWD=/
-TERMUX_VERSION=0.118.0
-EXTERNAL_STORAGE=/sdcard
-LD_PRELOAD=${TERMUX}/lib/libtermux-exec.so
-LANG=en_US.UTF-8
-TERMUX_APK_RELEASE=F_DROID
-DEX2OATBOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar
-ANDROID_DATA=/data
-ANDROID_I18N_ROOT=/apex/com.android.i18n
-SHLVL=1
-ANDROID_ROOT=/system
-BOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar:/apex/com.android.appsearch/javalib/framework-appsearch.jar:/apex/com.android.conscrypt/javalib/conscrypt.jar:/apex/com.android.ipsec/javalib/android.net.ipsec.ike.jar:/apex/com.android.media/javalib/updatable-media.jar:/apex/com.android.mediaprovider/javalib/framework-mediaprovider.jar:/apex/com.android.os.statsd/javalib/framework-statsd.jar:/apex/com.android.permission/javalib/framework-permission.jar:/apex/com.android.permission/javalib/framework-permission-s.jar:/apex/com.android.scheduling/javalib/framework-scheduling.jar:/apex/com.android.sdkext/javalib/framework-sdkextensions.jar:/apex/com.android.tethering/javalib/framework-connectivity.jar:/apex/com.android.tethering/javalib/framework-tethering.jar:/apex/com.android.wifi/javalib/framework-wifi.jar
-ANDROID_TZDATA_ROOT=/apex/com.android.tzdata
-TERMUX_APP_PID=25811
-PATH=/data/data/com.termux/files/usr/bin
-ANDROID_ART_ROOT=/apex/com.android.art
-_=${TERMUX}/bin/printenv
+export COLORTERM=truecolor
+export HISTCONTROL=ignoreboth
+export PREFIX=$TERMUX
+export JAVA_HOME=${TERMUX}/usr/opt/openjdk
+export TERMUX_IS_DEBUGGABLE_BUILD=0
+export TERMUX_MAIN_PACKAGE_FORMAT=debian
+export PWD=/
+export TERMUX_VERSION=0.118.0
+export EXTERNAL_STORAGE=/sdcard
+export LD_PRELOAD=${TERMUX}/usr/lib/libtermux-exec.so
+export LANG=en_US.UTF-8
+export DEX2OATBOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar
+export ANDROID_DATA=/data
+export ANDROID_I18N_ROOT=/apex/com.android.i18n
+export SHLVL=1
+export ANDROID_ROOT=/system
+export BOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar:/apex/com.android.appsearch/javalib/framework-appsearch.jar:/apex/com.android.conscrypt/javalib/conscrypt.jar:/apex/com.android.ipsec/javalib/android.net.ipsec.ike.jar:/apex/com.android.media/javalib/updatable-media.jar:/apex/com.android.mediaprovider/javalib/framework-mediaprovider.jar:/apex/com.android.os.statsd/javalib/framework-statsd.jar:/apex/com.android.permission/javalib/framework-permission.jar:/apex/com.android.permission/javalib/framework-permission-s.jar:/apex/com.android.scheduling/javalib/framework-scheduling.jar:/apex/com.android.sdkext/javalib/framework-sdkextensions.jar:/apex/com.android.tethering/javalib/framework-connectivity.jar:/apex/com.android.tethering/javalib/framework-tethering.jar:/apex/com.android.wifi/javalib/framework-wifi.jar
+export ANDROID_TZDATA_ROOT=/apex/com.android.tzdata
+export TERMUX_APP_PID=25811
+export ANDROID_ART_ROOT=/apex/com.android.art
+export _=${TERMUX}/usr/bin/printenv
 
 alias bb='$BBDIR/busybox'
 alias bsu='su -s bash'
@@ -94,4 +108,8 @@ flashbang() {
     flashlight 0
     i=$(($i+1))
   done
+}
+
+devicefetch() {
+  neofetch --ascii_distro $@
 }
