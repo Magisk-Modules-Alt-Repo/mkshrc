@@ -10,7 +10,7 @@ Systemlessly mksh.rc for better Terminal experience. Termux environment is also 
 - `python[2/3] [-m some_module]` (Works. You can also run an Telegram Userbot (e.g. HyperUBot))
 - `bash` (Works)
 - `node` (Works)
-- `npm` (Install errors when installing modules)
+- `npm` (Install errors when installing modules as superuser)
 
 > You have seen any binary works/not works yet? Tell me please!
 
