@@ -2,14 +2,12 @@
 
 suhelp() {
     echo "You're now SuperUser, here some tools"
-    echo "flashOn                          \tTurn on flashlight."
-    echo "flashOff	                       \tTurn off flashlight."
     echo "flashlight [0/1]                 \tTurn flashlight on or off."
     echo "flashbang [100]                  \tStarts an flashbang, default is 100 (not supported by all devices)."
     echo "sys[rw/ro]                       \tMounts system as Read-Write or Read-Only."
     echo "vibrate [--samsung/--aosp] 2000  \tVibrates the given value."
     echo "adbfi [on/off/stats]             \tEnables ADB over WiFi"
-    echo "roocheck                         \tChecks if you have root"
+    echo "rootcheck                         \tChecks if you have root"
     echo "devicefetch [distro]             \tDisplays neofetch (requires neofetch)."
 }
 
@@ -42,7 +40,6 @@ done
 
 unset p
 
-
 export host=android
 export LOL="your mom"
 export TMPDIR=/data/local/tmp
@@ -50,7 +47,7 @@ export TMPDIR=/data/local/tmp
 # Termux environment
 export COLORTERM=truecolor
 export HISTCONTROL=ignoreboth
-export PREFIX=$TERMUX
+export PREFIX=${TERMUX}
 export JAVA_HOME=${TERMUX}/usr/opt/openjdk
 export TERMUX_IS_DEBUGGABLE_BUILD=0
 export TERMUX_MAIN_PACKAGE_FORMAT=debian
@@ -79,11 +76,25 @@ alias lo='l -al'
 alias ls='ls --color=auto'
 alias nano='nano -l'
 alias sudo='su -c "$@"'
-alias sysro='mount -o remount,ro /'
-alias sysrw='mount -o remount,rw /'
 alias vd='cd'
-alias flashOn='flashlight 1'
-alias flashOff='flashlight 0'
+
+sysrw() {
+    mount -o remount,rw /
+    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
+    echo
+    echo -e "\e[38;5;82mSystem is now \e[38;5;198mRead-Write"
+    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
+    echo
+}
+
+sysro() {
+    mount -o remount,ro /
+    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
+    echo
+    echo -e "\e[38;5;82mSystem is now \e[38;5;198mRead-Only"
+    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
+    echo
+}
 
 # This may not work on all devices
 flashlight() {
