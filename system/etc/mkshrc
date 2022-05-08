@@ -1,5 +1,18 @@
 #!/system/bin/sh
 
+suhelp() {
+    echo "You're now SuperUser, here some tools"
+    echo "flashOn                          \tTurn on flashlight."
+    echo "flashOff	                       \tTurn off flashlight."
+    echo "flashlight [0/1]                 \tTurn flashlight on or off."
+    echo "flashbang [100]                  \tStarts an flashbang, default is 100 (not supported by all devices)."
+    echo "sys[rw/ro]                       \tMounts system as Read-Write or Read-Only."
+    echo "vibrate [--samsung/--aosp] 2000  \tVibrates the given value."
+    echo "adbfi [on/off/stats]             \tEnables ADB over WiFi"
+    echo "roocheck                         \tChecks if you have root"
+    echo "devicefetch [distro]             \tDisplays neofetch (requires neofetch)."
+}
+
 export TERMUX=/data/data/com.termux/files
 export LD_LIBRARY_PATH=${TERMUX}/usr/lib
 export SHELL=/data/data/com.termux/files/usr/bin/bash
@@ -9,13 +22,7 @@ export SHELL=/data/data/com.termux/files/usr/bin/bash
 if ((USER_ID)); then PS1='$'; else PS1='#'; fi
 
 if [ $(id -u) = 0 ]; then
-    echo "You're now SuperUser, here some tools"
-    echo "-flashOn              \t Turn on flashlight."
-    echo "-flashOff	            \t Turn off flashlight."
-    echo "-flashlight [0/1]     \t Turn flashlight on or off."
-    echo "-flashbang [100]      \t Starts an flashbang, default is 100 (not supported by all devices)."
-    echo "-sys[rw/ro]           \t Mounts system as Read-Write or Read-Only."
-    echo "-devicefetch [distro] \t Displays neofetch (requires neofetch)."
+    suhelp
 fi
 
 PS1='$(echo -e "\e[32m${USER}@${HOSTNAME}\033[m"):$(echo -e "\e[34m~${PWD:-?}\033[m") '"$PS1 "
@@ -35,9 +42,6 @@ done
 
 unset p
 
-if [ -f "<SDCARD>/.aliases" ]; then
-    . "<SDCARD>/.aliases"
-fi
 
 export host=android
 export LOL="your mom"
@@ -109,6 +113,32 @@ flashbang() {
 
 devicefetch() {
     neofetch --ascii_distro $@
+}
+
+vibrate() {
+    while [ "${1:-}" != "" ]; do
+        case "$1" in
+        "--samsung")
+            cmd vibrator vibrate $2
+            ;;
+        "--aosp")
+            cmd vibrator_manager synced oneshot $2
+            ;;
+        "--cancel")
+            cmd vibrator cancel && cmd vibrator_manager cancel
+            ;;
+        "--help")
+            echo ""
+            echo "Usage: $0 --samsung 2000"
+            echo "\t--samsung \tVibrator for Samsung devices"
+            echo "\t--aosp    \tVibrator for AOSP devices"
+            echo "\t--cancel  \tCancels all vibrators"
+            echo "\t--help    \tPrints the help and usage"
+            exit 1 # Exit script after printing help
+            ;;
+        esac
+        shift
+    done
 }
 
 rootcheck() {
