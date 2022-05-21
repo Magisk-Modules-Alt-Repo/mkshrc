@@ -1,6 +1,11 @@
 # .mkshrc
 Systemlessly mksh.rc for better Terminal experience. Termux environment is also useable.
 
+## Disable suhelp
+```bash
+DISPLAY_SUHELP=false
+```
+
 # What works outside?
 - `pip` (Please do not execute/install any package as superuser, bc it works when you're in superuser. It brick your device (same as `yarn`))
 - `npm` (May not work as superuser, it installs in some cases in the `/` dir, which is read-only bt default. run `sysrw` as superuser to make it read-write)
