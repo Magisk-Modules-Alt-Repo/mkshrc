@@ -1,10 +1,9 @@
 # .mkshrc
 Systemlessly mksh.rc for better Terminal experience. Termux environment is also useable.
 
-## Disable suhelp
-```bash
-DISPLAY_SUHELP=false
-```
+<changelog version="2022-05-22">
+    - Removed suhelp
+</changelog>
 
 # What works outside?
 - `pip` (Please do not execute/install any package as superuser, bc it works when you're in superuser. It brick your device (same as `yarn`))
