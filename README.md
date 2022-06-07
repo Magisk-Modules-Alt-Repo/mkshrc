@@ -33,7 +33,7 @@ pkg upgrade && pkg update
 pkg install python
 ```
 
-**How to run outside of Termux?**
+**How to run outside of Termux?**          
 ```bash
 # In some cases need you to load the mkshrc manually (e.g. fooView Shell Executor)
 if [ -f /system/etc/mkshrc ]; then
