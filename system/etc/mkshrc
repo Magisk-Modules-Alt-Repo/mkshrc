@@ -1,198 +1,23 @@
-#!/system/bin/sh
+# Copyright (c) 2010, 2012, 2013, 2014
+#	Thorsten Glaser <tg@mirbsd.org>
+# This file is provided under the same terms as mksh.
+#-
+# Minimal /system/etc/mkshrc for Android
+#
+# Support: https://launchpad.net/mksh
 
-export TERMUX=/data/data/com.termux/files
-export LD_LIBRARY_PATH=${TERMUX}/usr/lib
-export SHELL=/data/data/com.termux/files/usr/bin/bash
+set +o nohup
 
-: ${TERM:=xterm-256color} ${HOME:=/} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android}
-: ${SHELL:=$MKSH} ${USER:=$(getprop ro.product.device)}
-if ((USER_ID)); then PS1='$'; else PS1='#'; fi
+if (( USER_ID )); then PS1='$'; else PS1='#'; fi
+PS4='[$EPOCHREALTIME] '; PS1='${|
+	local e=$?
 
-PS1='$(echo -e "\e[32m${USER}@${HOSTNAME}\033[m"):$(echo -e "\e[34m~${PWD:-?}\033[m") '"$PS1 "
-if [ -d "/sbin/.magisk/busybox" ]; then
-    BBDIR="/sbin/.magisk/busybox"
-elif [ -d "/sbin/.core/busybox" ]; then
-    BBDIR="/sbin/.core/busybox"
-fi
-PATH=${PATH}:/sbin:${BBDIR}:${TERMUX}/usr/bin:${TERMUX}/usr/bin/applets:${TERMUX}/home/.bin.
-export TERM HOME MKSH HOSTNAME SHELL USER PATH
-# Place your own aliases in <SDCARD>/.aliases for ease.
+	(( e )) && REPLY+="$e|"
 
-for p in ~/.bin; do
-    [[ -d $p/. ]] || continue
-    [[ :$PATH: = *:$p:* ]] || PATH=$p:$PATH
-done
+	return $e
+}$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
 
-unset p
-
-export host=android
-export LOL="your mom"
-export TMPDIR=/data/local/tmp
-
-# Termux environment
-export COLORTERM=truecolor
-export HISTCONTROL=ignoreboth
-export PREFIX=${TERMUX}
-export JAVA_HOME=${TERMUX}/usr/opt/openjdk
-export TERMUX_IS_DEBUGGABLE_BUILD=0
-export TERMUX_MAIN_PACKAGE_FORMAT=debian
-export PWD=/
-export TERMUX_VERSION=0.118.0
-export EXTERNAL_STORAGE=/sdcard
-export LD_PRELOAD=${TERMUX}/usr/lib/libtermux-exec.so
-export LANG=en_US.UTF-8
-export DEX2OATBOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar
-export ANDROID_DATA=/data
-export ANDROID_I18N_ROOT=/apex/com.android.i18n
-export SHLVL=1
-export ANDROID_ROOT=/system
-export BOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/framework-graphics.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/apex/com.android.i18n/javalib/core-icu4j.jar:/apex/com.android.appsearch/javalib/framework-appsearch.jar:/apex/com.android.conscrypt/javalib/conscrypt.jar:/apex/com.android.ipsec/javalib/android.net.ipsec.ike.jar:/apex/com.android.media/javalib/updatable-media.jar:/apex/com.android.mediaprovider/javalib/framework-mediaprovider.jar:/apex/com.android.os.statsd/javalib/framework-statsd.jar:/apex/com.android.permission/javalib/framework-permission.jar:/apex/com.android.permission/javalib/framework-permission-s.jar:/apex/com.android.scheduling/javalib/framework-scheduling.jar:/apex/com.android.sdkext/javalib/framework-sdkextensions.jar:/apex/com.android.tethering/javalib/framework-connectivity.jar:/apex/com.android.tethering/javalib/framework-tethering.jar:/apex/com.android.wifi/javalib/framework-wifi.jar
-export ANDROID_TZDATA_ROOT=/apex/com.android.tzdata
-export TERMUX_APP_PID=25811
-export ANDROID_ART_ROOT=/apex/com.android.art
-export _=${TERMUX}/usr/bin/printenv
-
-alias bb='$BBDIR/busybox'
-alias bsu='su -s bash'
-alias l='bb ls --group-directories-first'
-alias la='l -A'
-alias ll='l -l'
-alias lo='l -al'
-alias ls='ls --color=auto'
-alias nano='nano -l'
-alias sudo='su -c "$@"'
-alias vd='cd'
-
-sysrw() {
-    mount -o remount,rw /
-    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
-    echo
-    echo -e "\e[38;5;82mSystem is now \e[38;5;198mRead-Write"
-    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
-    echo
-}
-
-sysro() {
-    mount -o remount,ro /
-    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
-    echo
-    echo -e "\e[38;5;82mSystem is now \e[38;5;198mRead-Only"
-    for i in {16..21} {21..16}; do echo -en "\e[38;5;${i}m#\e[0m"; done
-    echo
-}
-
-# This may not work on all devices
-flashlight() {
-    toggle=$(cat /sys/class/leds/led:switch_0/brightness)
-    if [ "$toggle" = "0" ]; then
-        echo 30 >/sys/class/leds/led:torch_0/brightness
-        echo 30 >/sys/class/leds/led:torch_3/brightness
-        echo 1 >/sys/class/leds/led:switch_0/brightness
-        echo "on"
-    else
-        echo 0 >/sys/class/leds/led:torch_0/brightness
-        echo 0 >/sys/class/leds/led:torch_3/brightness
-        echo 0 >/sys/class/leds/led:switch_0/brightness
-        echo "off"
-    fi
-}
-
-flashbang() {
-    i=1
-    value=$@
-    while [ $i -le ${value:=100} ]; do
-        flashlight 1
-        flashlight 0
-        i=$(($i + 1))
-    done
-}
-
-devicefetch() {
-    neofetch --ascii_distro $@
-}
-
-vibrate() {
-    while [ "${1:-}" != "" ]; do
-        case "$1" in
-        "--samsung")
-            cmd vibrator vibrate $2
-            ;;
-        "--aosp")
-            cmd vibrator_manager synced oneshot $2
-            ;;
-        "--cancel")
-            cmd vibrator cancel && cmd vibrator_manager cancel
-            ;;
-        "--help")
-            echo ""
-            echo "Usage: $0 --samsung 2000"
-            echo "\t--samsung \tVibrator for Samsung devices"
-            echo "\t--aosp    \tVibrator for AOSP devices"
-            echo "\t--cancel  \tCancels all vibrators"
-            echo "\t--help    \tPrints the help and usage"
-            exit 1 # Exit script after printing help
-            ;;
-        esac
-        shift
-    done
-}
-
-rootcheck() {
-    ROOT= && [ $USER = root ] || ROOT="su -c"
-}
-
-adbfi() {
-    rootcheck
-    case $1 in
-    on)
-        $ROOT setprop service.adb.tcp.port 5555
-        $ROOT stop adbd
-        $ROOT start adbd
-        echo "ADB over WiFi enabled"
-        ;;
-    off)
-        $ROOT setprop service.adb.tcp.port -1
-        $ROOT stop adbd
-        $ROOT start adbd
-        echo "ADB over WiFi disabled"
-        ;;
-    stats) case $(getprop service.adb.tcp.port) in -1) echo "off" ;; 5555) echo "on" ;; *) echo "off" ;; esac ;;
-    *)
-        echo "Usage: adbfi [option]"
-        echo " "
-        echo "Options:"
-        echo "-on    \tEnables ADB over Wifi"
-        echo "-off   \tDisables ADB over WiFi"
-        echo "-stats \tGets current status"
-        ;;
-    esac
-}
-
-overlays() {
-    opt=$1
-    rootcheck
-    [ "$2" ] || opt=null
-    case $opt in
-    enable)
-        shift
-        for i in $($ROOT cmd overlay list | grep -iE "^\[.*$1" | sed 's|\[.* ||g'); do $ROOT cmd overlay enable $i; done
-        ;;
-    disable)
-        shift
-        for i in $($ROOT cmd overlay list | grep -iE "^\[.*$1" | sed 's|\[.* ||g'); do $ROOT cmd overlay disable $i; done
-        ;;
-    list)
-        shift
-        overlayList=$($ROOT cmd overlay list | grep -iE "^\[.*$1")
-        echo "$overlayList"
-        ;;
-    *)
-        echo "Usage: overlays [option] (keyword)"
-        echo " "
-        echo "Options:"
-        echo "-enable  \tEnables all overlays that include the keyword in the packagename"
-        echo "-disable \tDisables all overlays that include the keyword in the packagename"
-        echo "-list    \tLists all overlays that include the keyword in the packagename"
-        ;;
-    esac
-}
+export TERM=xterm-256color
+# Uncomment the following lines if you want termux env!
+# export PATH=$PATH:/data/data/com.termux/files/usr/bin
+# export LD_PRELOAD=$LD_PRELOAD:/data/data/com.termux/files/usr/lib/libtermux-exec.so /data/data/com.termux/files/usr/bin/bash -l
