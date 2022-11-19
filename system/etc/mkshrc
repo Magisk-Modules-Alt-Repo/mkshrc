@@ -26,12 +26,12 @@ export YARN_HOME="/system/usr/share"
 export TERM="xterm-256color"
 
 # PATH Binary Folder
-export SYSTEM_EXT_BIN="/system_ext/bin"
+export SYSTEM_EXT_BIN="/system/system_ext/bin"
 export SYSTEM_BIN="/system/bin"
 ## Node.js module requirements
 export YARN_BIN="$YARN_HOME/.yarn/bin"
 export YARN_GLOBAL_BIN="$HOME/.config/yarn/global/node_modules/.bin"
-export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_BIN:$PATH"
+export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$PATH"
 
 # Aliases
 alias bsu='su -s bash'
