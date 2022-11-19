@@ -47,5 +47,5 @@ done
 
 # Keep the storage clear and use user based mkshrc
 if [ -f "$HOME/etc/mkshrc" ]; then
-  . /sdcard/mkshrc
+  . $HOME/etc/mkshrc
 fi
