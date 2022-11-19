@@ -40,7 +40,12 @@ alias lsa='ls --color=auto -A'
 
 # Loads user defined scripts
 for script in $HOME/etc/profile.d/*.sh ; do
-        if [ -r $script ] ; then
-                . $script
-        fi
+  if [ -f $script ] ; then
+    . $script
+  fi
 done
+
+# Keep the storage clear and use user based mkshrc
+if [ -f "$HOME/etc/mkshrc" ]; then
+  . /sdcard/mkshrc
+fi
