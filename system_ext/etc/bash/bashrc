@@ -1,0 +1,3 @@
+if [ -r /system/etc/mkshrc ] ; then
+  . /system/etc/mkshrc
+fi

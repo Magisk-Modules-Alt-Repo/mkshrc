@@ -1,23 +1,46 @@
 # Copyright (c) 2010, 2012, 2013, 2014
-#	Thorsten Glaser <tg@mirbsd.org>
+#       Thorsten Glaser <tg@mirbsd.org>
 # This file is provided under the same terms as mksh.
 #-
 # Minimal /system/etc/mkshrc for Android
 #
 # Support: https://launchpad.net/mksh
 
-set +o nohup
+if ((USER_ID)); then PS1='$'; else PS1='#'; fi
 
-if (( USER_ID )); then PS1='$'; else PS1='#'; fi
-PS4='[$EPOCHREALTIME] '; PS1='${|
-	local e=$?
+# Get current user for node_modules folder end yarn configuration.
+if ((USER_ID)); then CURRENT_USER='0'; else CURRENT_USER=$(am get-current-user); fi
 
-	(( e )) && REPLY+="$e|"
+export HOME="/data/system/users/$CURRENT_USER"
+export USER=$(id -un)
+export HOSTNAME=$(cat /proc/sys/kernel/hostname)
 
-	return $e
-}$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
+PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└─\e[0m# '
+PS0="└─"
 
-export TERM=xterm-256color
-# Uncomment the following lines if you want termux env!
-# export PATH=$PATH:/data/data/com.termux/files/usr/bin
-# export LD_PRELOAD=$LD_PRELOAD:/data/data/com.termux/files/usr/lib/libtermux-exec.so /data/data/com.termux/files/usr/bin/bash -l
+# Not tested yet
+# export PREFIX=/system
+export CURRENT_USER="$CURRENT_USER"
+export TMPDIR="/data/local/tmp"
+export YARN_HOME="/system/usr/share"
+export TERM="xterm-256color"
+
+# PATH Binary Folder
+export SYSTEM_EXT_BIN="/system_ext/bin"
+export SYSTEM_BIN="/system/bin"
+## Node.js module requirements
+export YARN_BIN="$YARN_HOME/.yarn/bin"
+export YARN_GLOBAL_BIN="$HOME/.config/yarn/global/node_modules/.bin"
+export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_BIN:$PATH"
+
+# Aliases
+alias bsu='su -s bash'
+alias ls='ls --color=auto'
+alias lsa='ls --color=auto -A'
+
+# Loads user defined scripts
+for script in $HOME/etc/profile.d/*.sh ; do
+        if [ -r $script ] ; then
+                . $script
+        fi
+done
