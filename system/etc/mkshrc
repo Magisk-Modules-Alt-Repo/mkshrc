@@ -91,6 +91,7 @@ fi
 PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└─\e[0m# '
 PS0="└─"
 
+export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="/data/local/tmp"
 export YARN_HOME="/system/usr/share"
 export TERM="xterm-256color"
