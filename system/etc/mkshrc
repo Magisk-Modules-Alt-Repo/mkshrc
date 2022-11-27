@@ -93,7 +93,6 @@ PS0="└─"
 
 export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="/data/local/tmp"
-export YARN_HOME="/system/usr/share"
 export TERM="xterm-256color"
 
 # PATH Binary Folder
@@ -101,8 +100,9 @@ export SYSTEM_EXT_BIN="/system/system_ext/bin"
 export SYSTEM_BIN="/system/bin"
 export SYSTEM_PRODUCT_BIN="/system/product/bin"
 export VENDOR_BIN="/vendor/bin"
+export BIN_GET_BIN="/system/usr/share/bin-get/bin"
 ## Node.js module requirements
-export YARN_BIN="$YARN_HOME/.yarn/bin"
+export YARN_BIN="/system/usr/share/.yarn/bin"
 export YARN_GLOBAL_BIN="$HOME/.config/yarn/global/node_modules/.bin"
 
 export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$PATH"
