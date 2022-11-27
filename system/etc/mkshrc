@@ -6,21 +6,91 @@
 #
 # Support: https://launchpad.net/mksh
 
+sudo() {
+  su -c "$@"
+}
+
+set_perm() {
+  sudo chown $2:$3 $1 || return 1
+  sudo chmod $4 $1 || return 1
+  (if [ -z $5 ]; then
+    case $1 in
+    *"system/vendor/app/"*) sudo chcon 'u:object_r:vendor_app_file:s0' $1 ;;
+    *"system/vendor/etc/"*) sudo chcon 'u:object_r:vendor_configs_file:s0' $1 ;;
+    *"system/vendor/overlay/"*) sudo chcon 'u:object_r:vendor_overlay_file:s0' $1 ;;
+    *"system/vendor/"*) sudo chcon 'u:object_r:vendor_file:s0' $1 ;;
+    *"data/chuser/"*) sudo chcon 'u:object_r:system_user_file:s0' $1 ;;
+    *) sudo chcon 'u:object_r:system_file:s0' $1 ;;
+    esac
+  else
+    sudo chcon $5 $1
+  fi) || return 1
+}
+
 if ((USER_ID)); then PS1='$'; else PS1='#'; fi
 
-# Get current user for node_modules folder end yarn configuration.
-if ((USER_ID)); then CURRENT_USER='0'; else CURRENT_USER=$(am get-current-user); fi
-
-export HOME="/data/system/users/$CURRENT_USER"
 export USER=$(id -un)
+export USERID=$(id -u)
+export HOME="/data/chuser/$USER/home"
+export USR="/data/chuser/$USER/usr"
+# Can be useful in Termux
+export PREFIX="$USR"
 export HOSTNAME=$(cat /proc/sys/kernel/hostname)
+
+if [ ! -d "/data/chuser" ]; then
+  sudo mkdir /data/chuser
+  set_perm /data/chuser 9997 9997 0777
+fi
+
+if [ ! -d "/data/chuser/$USER" ]; then
+  mkdir /data/chuser/$USER
+  mkdir $HOME
+  mkdir $USR
+
+  # Public directories
+  ln -s /storage/self/primary/Pictures $HOME/Pictures
+  ln -s /storage/self/primary/Download $HOME/Download
+  ln -s /storage/self/primary/Movies $HOME/Movies
+  ln -s /storage/self/primary/Music $HOME/Music
+  ln -s /storage/self/primary/Documents $HOME/Documents
+
+  for path in etc bin lib var tmp share opt include; do
+    if [ ! -d "$USR/$path" ]; then
+      mkdir $USR/$path
+    fi
+  done
+
+  # Add Magisk's Busybox. Only works as root user.
+  # ln -s /data/adb/magisk/busybox $USR/bin/busybox
+
+  if [ ! -d "$USR/etc/profile.d" ]; then
+    mkdir $USR/etc/profile.d
+    echo "alias sudo=\"su -c \"\$@\"\"" >$USR/etc/profile.d/sudo.sh
+    echo "notification() {\n  su -lp 2000 -c \"cmd notification post -S bigtext -t 'Mkshrc Service Mount Error' 'Tag' 'There was an errer while mounting your system as read-write or read-only.'\"\n}" >$USR/etc/profile.d/notification.sh
+  fi
+
+  if [ ! -f "$USR/etc/mkshrc" ]; then
+    echo "# Aliases\nalias bsu='su -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'" >$USR/etc/mkshrc
+  fi
+fi
+
+if [ -d "/data/chuser/$USER" ]; then
+  # Loads user defined scripts
+  for script in $USR/etc/profile.d/*.sh; do
+    if [ -f $script ]; then
+      . $script
+    fi
+  done
+
+  # Keep the storage clear and use user based mkshrc
+  if [ -f "$USR/etc/mkshrc" ]; then
+    . $USR/etc/mkshrc
+  fi
+fi
 
 PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└─\e[0m# '
 PS0="└─"
 
-# Not tested yet
-# export PREFIX=/system
-export CURRENT_USER="$CURRENT_USER"
 export TMPDIR="/data/local/tmp"
 export YARN_HOME="/system/usr/share"
 export TERM="xterm-256color"
@@ -33,21 +103,15 @@ export VENDOR_BIN="/vendor/bin"
 ## Node.js module requirements
 export YARN_BIN="$YARN_HOME/.yarn/bin"
 export YARN_GLOBAL_BIN="$HOME/.config/yarn/global/node_modules/.bin"
-export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN$VENDOR_BIN:$SYSTEM_PRODUCT_BIN:$PATH"
 
-# Aliases
-alias bsu='su -s bash'
-alias ls='ls --color=auto'
-alias lsa='ls --color=auto -A'
+export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$PATH"
 
-# Loads user defined scripts
-for script in $HOME/etc/profile.d/*.sh ; do
-  if [ -f $script ] ; then
-    . $script
-  fi
-done
-
-# Keep the storage clear and use user based mkshrc
-if [ -f "$HOME/etc/mkshrc" ]; then
-  . $HOME/etc/mkshrc
+# Symlink /system into /usr. This is only a requirement for the Node.js module, to make binaries work.
+sudo mount -o rw,remount /
+if [ ! -d "/usr" ]; then
+  sudo ln -s -T /system /usr
 fi
+sudo mount -o ro,remount /
+
+cd $HOME
+unset set_perm sudo
