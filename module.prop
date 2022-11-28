@@ -1,6 +1,6 @@
 id=mkshrc
 name=Systemless mksh.rc
-version=1.0.8
-versionCode=108
+version=1.0.9
+versionCode=109
 author=Der_Googler
 description=Systemlessly mksh.rc for better Terminal experience to turn your device into a workstation :)
