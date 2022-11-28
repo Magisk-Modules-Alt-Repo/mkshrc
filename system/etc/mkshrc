@@ -82,9 +82,13 @@ if [ -d "/data/chuser/$USER" ]; then
     fi
   done
 
-  # Keep the storage clear and use user based mkshrc
   if [ -f "$USR/etc/mkshrc" ]; then
-    . $USR/etc/mkshrc
+    ln -s $HOME/.mkshrc $USR/etc/mkshrc
+  fi
+
+  # Keep the storage clear and use user based mkshrc
+  if [ -f "$HOME/.mkshrc" ]; then
+    . $HOME/.mkshrc
   fi
 fi
 
@@ -94,6 +98,7 @@ PS0="└─"
 export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="$USR/tmp"
 export TERM="xterm-256color"
+export SHELL="/system/bin/sh"
 
 # PATH Binary Folder
 export SYSTEM_EXT_BIN="/system/system_ext/bin"
