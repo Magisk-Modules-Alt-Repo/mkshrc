@@ -61,7 +61,7 @@ if [ ! -d "/data/chuser/$USER" ]; then
   done
 
   # Add Magisk's Busybox. Only works as root user.
-  # ln -s /data/adb/magisk/busybox $USR/bin/busybox
+  ln -s /data/adb/magisk/busybox $USR/bin/busybox
 
   if [ ! -d "$USR/etc/profile.d" ]; then
     mkdir $USR/etc/profile.d
@@ -92,7 +92,7 @@ PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└�
 PS0="└─"
 
 export MKSHRCSYS_INSTALLED="true"
-export TMPDIR="/data/local/tmp"
+export TMPDIR="$USR/tmp"
 export TERM="xterm-256color"
 
 # PATH Binary Folder
