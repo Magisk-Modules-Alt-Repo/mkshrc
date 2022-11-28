@@ -69,8 +69,8 @@ if [ ! -d "/data/chuser/$USER" ]; then
     echo "notification() {\n  su -lp 2000 -c \"cmd notification post -S bigtext -t 'Mkshrc Service Mount Error' 'Tag' 'There was an errer while mounting your system as read-write or read-only.'\"\n}" >$USR/etc/profile.d/notification.sh
   fi
 
-  if [ ! -f "$USR/etc/mkshrc" ]; then
-    echo "# Aliases\nalias bsu='su -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'" >$USR/etc/mkshrc
+  if [ ! -f "$HOME/.mkshrc" ]; then
+    echo "# Aliases\nalias bsu='su -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'" >$HOME/.mkshrc
   fi
 fi
 
