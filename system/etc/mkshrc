@@ -110,7 +110,7 @@ export BIN_GET_BIN="/system/usr/share/bin-get/bin"
 export YARN_BIN="/system/usr/share/.yarn/bin"
 export YARN_GLOBAL_BIN="$HOME/.config/yarn/global/node_modules/.bin"
 
-export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$PATH"
+export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$BIN_GET_BIN:$PATH"
 
 # Symlink /system into /usr. This is only a requirement for the Node.js module, to make binaries work.
 sudo mount -o rw,remount /
