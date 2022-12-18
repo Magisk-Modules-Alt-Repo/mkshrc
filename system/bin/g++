@@ -1,0 +1,2 @@
+#!/system/bin/sh
+aarch64-linux-android-g++ "$@"
