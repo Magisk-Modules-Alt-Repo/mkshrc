@@ -27,8 +27,6 @@ set_perm() {
   fi) || return 1
 }
 
-if ((USER_ID)); then PS1='$'; else PS1='#'; fi
-
 export USER=$(id -un)
 export USERID=$(id -u)
 export HOME="/data/chuser/$USER/home"
@@ -92,8 +90,13 @@ if [ -d "/data/chuser/$USER" ]; then
   fi
 fi
 
-PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└─\e[0m# '
-PS0="└─"
+if [ "$USER" != "root" ]; then
+  PS='$'
+else
+  PS='#'
+fi
+
+PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└─\e[0m$PS '
 
 export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="$USR/tmp"
