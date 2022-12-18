@@ -35,6 +35,11 @@ export USR="/data/chuser/$USER/usr"
 export PREFIX="$USR"
 export HOSTNAME=$(cat /proc/sys/kernel/hostname)
 
+export HISTCONTROL="ignoreboth"
+export HISTSIZE="1000"
+export HISTFILESIZE="2000"
+export HISTFILE="$HOME/.mksh_history"
+
 if [ ! -d "/data/chuser" ]; then
   sudo mkdir /data/chuser
   set_perm /data/chuser 9997 9997 0777
@@ -80,6 +85,8 @@ if [ -d "/data/chuser/$USER" ]; then
     fi
   done
 
+  unset script
+
   if [ ! -f "$USR/etc/mkshrc" ]; then
     ln -s $HOME/.mkshrc $USR/etc/mkshrc
   fi
@@ -91,12 +98,12 @@ if [ -d "/data/chuser/$USER" ]; then
 fi
 
 if [ "$USER" != "root" ]; then
-  PS='$'
+  PS1='$'
 else
-  PS='#'
+  PS1='#'
 fi
 
-PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[34m${PWD:-?}\e[0m\n\e[35m└─\e[0m$PS '
+PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$PS1 '
 
 export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="$USR/tmp"
