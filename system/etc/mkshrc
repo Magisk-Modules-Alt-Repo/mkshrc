@@ -32,7 +32,7 @@ export USERID=$(id -u)
 export HOME="/data/chuser/$USER/home"
 export USR="/data/chuser/$USER/usr"
 # Can be useful in Termux
-export PREFIX="$USR"
+export PREFIX="/data/chuser/$USER/usr"
 export HOSTNAME=$(cat /proc/sys/kernel/hostname)
 
 export HISTCONTROL="ignoreboth"
@@ -48,7 +48,7 @@ fi
 if [ ! -d "/data/chuser/$USER" ]; then
   mkdir /data/chuser/$USER
   mkdir $HOME
-  mkdir $USR
+  mkdir $PREFIX
 
   # Public directories
   ln -s /storage/self/primary/Pictures $HOME/Pictures
@@ -58,18 +58,17 @@ if [ ! -d "/data/chuser/$USER" ]; then
   ln -s /storage/self/primary/Documents $HOME/Documents
 
   for path in etc bin lib var tmp share opt include; do
-    if [ ! -d "$USR/$path" ]; then
-      mkdir $USR/$path
+    if [ ! -d "$PREFIX/$path" ]; then
+      mkdir $PREFIX/$path
     fi
   done
 
   # Add Magisk's Busybox. Only works as root user.
-  ln -s /data/adb/magisk/busybox $USR/bin/busybox
+  ln -s /data/adb/magisk/busybox $PREFIX/bin/busybox
 
-  if [ ! -d "$USR/etc/profile.d" ]; then
-    mkdir $USR/etc/profile.d
-    echo "alias sudo=\"su -c \"\$@\"\"" >$USR/etc/profile.d/sudo.sh
-    echo "notification() {\n  su -lp 2000 -c \"cmd notification post -S bigtext -t 'Mkshrc Service Mount Error' 'Tag' 'There was an errer while mounting your system as read-write or read-only.'\"\n}" >$USR/etc/profile.d/notification.sh
+  if [ ! -d "$PREFIX/etc/profile.d" ]; then
+    mkdir $PREFIX/etc/profile.d
+    echo "alias sudo=\"su -c \"\$@\"\"" >$PREFIX/etc/profile.d/sudo.sh
   fi
 
   if [ ! -f "$HOME/.mkshrc" ]; then
@@ -79,7 +78,7 @@ fi
 
 if [ -d "/data/chuser/$USER" ]; then
   # Loads user defined scripts
-  for script in $USR/etc/profile.d/*.sh; do
+  for script in $PREFIX/etc/profile.d/*.sh; do
     if [ -f $script ]; then
       . $script
     fi
@@ -87,8 +86,8 @@ if [ -d "/data/chuser/$USER" ]; then
 
   unset script
 
-  if [ ! -f "$USR/etc/mkshrc" ]; then
-    ln -s $HOME/.mkshrc $USR/etc/mkshrc
+  if [ ! -f "$PREFIX/etc/mkshrc" ]; then
+    ln -s $HOME/.mkshrc $PREFIX/etc/mkshrc
   fi
 
   # Keep the storage clear and use user based mkshrc
@@ -101,7 +100,7 @@ if ((USER_ID)); then MODE_PS1='$'; else MODE_PS1='#'; fi
 PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$MODE_PS1 '
 
 export MKSHRCSYS_INSTALLED="true"
-export TMPDIR="$USR/tmp"
+export TMPDIR="$PREFIX/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
 
@@ -112,10 +111,10 @@ export SYSTEM_PRODUCT_BIN="/system/product/bin"
 export VENDOR_BIN="/vendor/bin"
 export BIN_GET_BIN="/system/usr/share/bin-get/bin"
 
-export PATH="$PATH:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$BIN_GET_BIN"
+export PATH="$PATH:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$PREFIX/bin:$BIN_GET_BIN"
 
 # Modules should not able to manipulate the entire mkshrc
-for rc in /data/adb/modules/*/system/etc/*.mkshrc; do
+for rc in /system/etc/mkshrc.d/*.d.sh; do
   if [ -f $rc ]; then
     . $rc
   fi

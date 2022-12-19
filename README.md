@@ -1,4 +1,4 @@
-# .mkshrc
+# Systemless mkshrc
 
 Systemlessly mksh.rc for better Terminal experience to turn your device into a workstation :)
 

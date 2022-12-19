@@ -123,7 +123,7 @@ REPLACE="
 
 print_modname() {
     ui_print "========================================="
-    ui_print "            Systemless mksh.rc           "
+    ui_print "            Systemless mkshrc           "
     ui_print "-----------------------------------------"
     ui_print "      for better Terminal experience     "
     ui_print "to turn your device into a workstation :)"
@@ -132,6 +132,19 @@ print_modname() {
     ui_print "========================================="
 }
 
+MODULES=$(magisk --path)/.magisk/modules
+
+require_modules() {
+    for module in $@; do
+        [ ! -d "$MODULES/$module" ] && echo "$MODULES/$module is missing, please install it to use this module."
+    done
+}
+
+conflicting_modules() {
+    for module in $@; do
+        [ -d "$MODULES/$module" ] && echo "$MODULES/$module is installed, please remove it to use this module."
+    done
+}
 
 on_install() {
     # The following is the default implementation: extract $ZIPFILE/system to $MODPATH
