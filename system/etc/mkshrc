@@ -98,12 +98,12 @@ if [ -d "/data/chuser/$USER" ]; then
 fi
 
 if [ "$USER" != "root" ]; then
-  PS1='$'
+  MODE_PS1='$'
 else
-  PS1='#'
+  MODE_PS1='#'
 fi
 
-PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$PS1 '
+PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$MODE_PS1 '
 
 export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="$USR/tmp"
@@ -129,5 +129,13 @@ if [ ! -d "/usr" ]; then
 fi
 sudo mount -o ro,remount /
 
+# Modules should not able to manipulate the entire mkshrc
+MODULES="$(magisk --path)/.magisk/modules"
+for rc in $MODULES/*/mkshrc; do
+  if [ -f $rc ]; then
+    . $rc
+  fi
+done
+
 cd $HOME
-unset set_perm sudo
+unset set_perm sudo MODULES rc MODE_PS1
