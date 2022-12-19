@@ -141,7 +141,6 @@ on_install() {
 
     # Check if one of conflicting modules is installed
     conflicting_modules terminalmods
-    require_modules mkshrc
 
     # Symbolic link for lowercase/UPPERCASE support in terminal
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
@@ -155,29 +154,6 @@ on_install() {
 set_permissions() {
     # The following is the default rule, DO NOT remove
     set_perm_recursive $MODPATH 0 0 0755 0644
-    set_perm $MODPATH/system/bin/aarch64-linux-android-ar                   0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-as                   0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-g++                  0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-gcc                  0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-gcov-dump            0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-gcov-tool            0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-Id                   0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-nm                   0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-ranlib               0 0 0755
-    set_perm $MODPATH/system/bin/aarch64-linux-android-strip                0 0 0755
-    set_perm $MODPATH/system/bin/m4                                         0 0 0755
-    set_perm $MODPATH/system/bin/make                                       0 0 0755
-    set_perm $MODPATH/system/bin/pkg-config                                 0 0 0755
-    set_perm $MODPATH/system/bin/ar                                         0 0 0755
-    set_perm $MODPATH/system/bin/as                                         0 0 0755
-    set_perm $MODPATH/system/bin/cc                                         0 0 0755
-    set_perm $MODPATH/system/bin/cmake                                      0 0 0755
-    set_perm $MODPATH/system/bin/g++                                        0 0 0755
-    set_perm $MODPATH/system/bin/gcc                                        0 0 0755
-    set_perm $MODPATH/system/bin/Id                                         0 0 0755
-    set_perm $MODPATH/system/bin/nm                                         0 0 0755
-    set_perm $MODPATH/system/bin/ranlib                                     0 0 0755
-    set_perm $MODPATH/system/bin/strip                                      0 0 0755
 
     # Here are some examples:
     # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644

@@ -97,12 +97,7 @@ if [ -d "/data/chuser/$USER" ]; then
   fi
 fi
 
-if [ "$USER" != "root" ]; then
-  MODE_PS1='$'
-else
-  MODE_PS1='#'
-fi
-
+if ((USER_ID)); then MODE_PS1='$'; else MODE_PS1='#'; fi
 PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$MODE_PS1 '
 
 export MKSHRCSYS_INSTALLED="true"
@@ -116,26 +111,15 @@ export SYSTEM_BIN="/system/bin"
 export SYSTEM_PRODUCT_BIN="/system/product/bin"
 export VENDOR_BIN="/vendor/bin"
 export BIN_GET_BIN="/system/usr/share/bin-get/bin"
-## Node.js module requirements
-export YARN_BIN="/system/usr/share/.yarn/bin"
-export YARN_GLOBAL_BIN="$HOME/.config/yarn/global/node_modules/.bin"
 
-export PATH="$YARN_BIN:$YARN_GLOBAL_BIN:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$BIN_GET_BIN:$PATH"
-
-# Symlink /system into /usr. This is only a requirement for the Node.js module, to make binaries work.
-sudo mount -o rw,remount /
-if [ ! -d "/usr" ]; then
-  sudo ln -s -T /system /usr
-fi
-sudo mount -o ro,remount /
+export PATH="$PATH:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$USR/bin:$BIN_GET_BIN"
 
 # Modules should not able to manipulate the entire mkshrc
-MODULES="$(magisk --path)/.magisk/modules"
-for rc in $MODULES/*/mkshrc; do
+for rc in /data/adb/modules/*/system/etc/*.mkshrc; do
   if [ -f $rc ]; then
     . $rc
   fi
 done
 
 cd $HOME
-unset set_perm sudo MODULES rc MODE_PS1
+unset set_perm sudo rc
