@@ -6,6 +6,28 @@
 #
 # Support: https://launchpad.net/mksh
 
+unset PATH
+
+export ANDROID_BOOTLOGO="1"
+export ANDROID_ROOT="/system"
+export ANDROID_ASSETS="/system/app"
+export ANDROID_DATA="/data"
+export ANDROID_STORAGE="/storage"
+export ANDROID_ART_ROOT="/apex/com.android.art"
+export ANDROID_I18N_ROOT="/apex/com.android.i18n"
+export ANDROID_TZDATA_ROOT="/apex/com.android.tzdata"
+export EXTERNAL_STORAGE="/sdcard"
+export ASEC_MOUNTPOINT="/mnt/asec"
+
+# export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
+export ANDROID_BOOTLOGO="1"
+export ANDROID_ROOT="/system"
+export ANDROID_ASSETS="/system/app"
+export ANDROID_DATA="/data"
+export ASEC_MOUNTPOINT="/mnt/asec"
+export LOOP_MOUNTPOINT="/mnt/obb"
+export BOOTCLASSPATH="/system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/filterfw.jar"
+
 sudo() {
   su -c "$@"
 }
@@ -103,15 +125,7 @@ export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="$PREFIX/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
-
-# PATH Binary Folder
-export SYSTEM_EXT_BIN="/system/system_ext/bin"
-export SYSTEM_BIN="/system/bin"
-export SYSTEM_PRODUCT_BIN="/system/product/bin"
-export VENDOR_BIN="/vendor/bin"
-export BIN_GET_BIN="/system/usr/share/bin-get/bin"
-
-export PATH="$PATH:$SYSTEM_BIN:$SYSTEM_EXT_BIN:$SYSTEM_PRODUCT_BIN:$VENDOR_BIN:$PREFIX/bin:$BIN_GET_BIN"
+export PATH="/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin:/system/product/bin:/system/usr/share/bin-get/bin:/system/system_ext/bin:$PREFIX/bin"
 
 # Modules should not able to manipulate the entire mkshrc
 for rc in /system/etc/mkshrc.d/*.d.sh; do
