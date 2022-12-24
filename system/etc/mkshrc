@@ -6,7 +6,7 @@
 #
 # Support: https://launchpad.net/mksh
 
-unset PATH
+unset PATH HOME PREFIX
 
 export ANDROID_BOOTLOGO="1"
 export ANDROID_ROOT="/system"
