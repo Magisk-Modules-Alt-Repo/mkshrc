@@ -28,8 +28,8 @@ export ASEC_MOUNTPOINT="/mnt/asec"
 export LOOP_MOUNTPOINT="/mnt/obb"
 export BOOTCLASSPATH="/system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/filterfw.jar"
 
-. /system/lib/lib-mkshrc/api/core.sh
-. /system/lib/lib-mkshrc/api/api.f2c.sh
+source /system/lib/lib-mkshrc/api/core.sh
+source /system/lib/lib-mkshrc/api/f2c.sh
 
 export USER=$(id -un)
 export USERID=$(id -u)
