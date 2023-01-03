@@ -8,6 +8,7 @@
 
 unset PATH HOME PREFIX
 
+export MKLIB="/system/usr/share/lib-mkshrc"
 export ANDROID_BOOTLOGO="1"
 export ANDROID_ROOT="/system"
 export ANDROID_ASSETS="/system/app"
@@ -28,9 +29,10 @@ export ASEC_MOUNTPOINT="/mnt/asec"
 export LOOP_MOUNTPOINT="/mnt/obb"
 export BOOTCLASSPATH="/system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/filterfw.jar"
 
-source /system/usr/share/lib-mkshrc/api/core.sh
-source /system/usr/share/lib-mkshrc/api/f2c.sh
-
+source $MKLIB/util/sudo.sh
+source $MKLIB/util/setperm.sh
+# Does not get auto included in future updates
+source $MKLIB/util/f2c.sh
 
 export USER=$(id -un)
 export USERID=$(id -u)
@@ -47,7 +49,7 @@ export HISTFILE="$HOME/.mksh_history"
 
 if [ ! -d "/data/chuser" ]; then
   sudo mkdir /data/chuser
-  set_perm /data/chuser 9997 9997 0777
+  setperm:insecure /data/chuser 9997 9997 0777
 fi
 
 if [ ! -d "/data/chuser/$USER" ]; then
@@ -118,4 +120,4 @@ for rc in /system/etc/mkshrc.d/*.d.sh; do
 done
 
 cd $HOME
-unset set_perm sudo rc
+unset setperm sudo rc setperm:insecure
