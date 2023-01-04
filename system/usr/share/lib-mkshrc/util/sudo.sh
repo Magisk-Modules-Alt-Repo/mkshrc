@@ -1,5 +1,4 @@
-#!/system/bin/sh
-
+# Usage: sudo [command]
 function sudo {
   su -c "$@"
 }

@@ -1,7 +1,8 @@
-#!/system/bin/sh
-
 source $MKLIB/util/sudo.sh
 
+
+# NOTE: This executed as root!
+# USage: setperm:insecure $PREFIX/bin/* $USERID $USERID 0755
 function setperm:insecure {
   sudo chown $2:$3 $1 || return 1
   sudo chmod $4 $1 || return 1
@@ -19,6 +20,7 @@ function setperm:insecure {
   fi) || return 1
 }
 
+# USage: setperm $PREFIX/bin/* $USERID $USERID 0755
 function setperm {
   chown $2:$3 $1 || return 1
   chmod $4 $1 || return 1

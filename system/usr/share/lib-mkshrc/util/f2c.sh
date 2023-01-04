@@ -1,10 +1,10 @@
 # Scoped user bases variables
 function mkshrc-setenv {
-	eval export "\"${USER}_$1\""'="$2"'
+  eval export "\"${USER}_$1\""'="$2"'
 }
 
 function mkshrc-getenv {
-	eval printenv "${USER}_$1"
+  eval printenv "${USER}_$1"
 }
 
 function mkshrc-add-path {
