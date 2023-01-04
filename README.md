@@ -35,10 +35,10 @@ source $MKLIB/<folder>/<file>.sh
 
 > ⚠️ This file includes insecure methods
 
-Just import it.
+Check if mkshrc is installed
 
 ```shell
-source $MKLIB/core/installed.sh
+[ ! -d $MKLIB ] && echo "Source fail!" && exit 122;
 ```
 
 #### console/abort
