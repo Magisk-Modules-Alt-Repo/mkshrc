@@ -9,7 +9,7 @@
 unset PATH HOME PREFIX
 
 export MKLIB="/system/usr/share/lib-mkshrc"
-export ANDROID_BOOTLOGO="1"
+# export ANDROID_BOOTLOGO="1"
 export ANDROID_ROOT="/system"
 export ANDROID_ASSETS="/system/app"
 export ANDROID_DATA="/data"
@@ -20,8 +20,9 @@ export ANDROID_TZDATA_ROOT="/apex/com.android.tzdata"
 export EXTERNAL_STORAGE="/sdcard"
 export ASEC_MOUNTPOINT="/mnt/asec"
 
-# export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
-export ANDROID_BOOTLOGO="1"
+# FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#ld_library_path-problems
+export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
+# export ANDROID_BOOTLOGO="1"
 export ANDROID_ROOT="/system"
 export ANDROID_ASSETS="/system/app"
 export ANDROID_DATA="/data"
@@ -31,29 +32,25 @@ export BOOTCLASSPATH="/system/framework/core.jar:/system/framework/core-junit.ja
 
 source $MKLIB/util/sudo.sh
 source $MKLIB/util/setperm.sh
-# Does not get auto included in future updates
 source $MKLIB/util/f2c.sh
 
 export USER=$(id -un)
 export USERID=$(id -u)
 export HOME="/data/chuser/$USER/home"
+# Deprecated: Please use $PREFIX
 export USR="/data/chuser/$USER/usr"
-# Can be useful in Termux
 export PREFIX="/data/chuser/$USER/usr"
-export HOSTNAME=$(cat /proc/sys/kernel/hostname)
+# FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#how-to-edit-hostname
+export HOSTNAME=$(uname -n)
 
 export HISTCONTROL="ignoreboth"
 export HISTSIZE="1000"
 export HISTFILESIZE="2000"
 export HISTFILE="$HOME/.mksh_history"
 
-if [ ! -d "/data/chuser" ]; then
-  sudo mkdir /data/chuser
-  setperm:insecure /data/chuser 9997 9997 0777
-fi
-
 if [ ! -d "/data/chuser/$USER" ]; then
-  mkdir /data/chuser/$USER
+  mkdir -p /data/chuser/$USER
+  setperm:insecure /data/chuser 9997 9997 0777
   mkdir $HOME
   mkdir $PREFIX
 
@@ -71,15 +68,25 @@ if [ ! -d "/data/chuser/$USER" ]; then
   done
 
   # Add Magisk's Busybox. Only works as root user.
-  ln -s /data/adb/magisk/busybox $PREFIX/bin/busybox
+  if [ "$USER" = "root" ]; then
+    ln -s /data/adb/magisk/busybox $PREFIX/bin/busybox
+  else
+    echo "Magisk's Busybox was not linked.\nLearn more at https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#magisks-busybox-was-not-linked"
+  fi
 
   if [ ! -d "$PREFIX/etc/profile.d" ]; then
     mkdir $PREFIX/etc/profile.d
-    echo "alias sudo=\"su -c \"\$@\"\"" >$PREFIX/etc/profile.d/sudo.sh
+  fi
+
+  if [ ! -d "$PREFIX/etc/env.d" ]; then
+    mkdir $PREFIX/etc/env.d
   fi
 
   if [ ! -f "$HOME/.mkshrc" ]; then
-    echo "# Aliases\nalias bsu='su -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'" >$HOME/.mkshrc
+    echo "# Aliases\nalias bsu='su -p -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'\nalias nano='nano -l'" >$HOME/.mkshrc
+    if [ ! -f "$HOME/.bashrc" ]; then
+      ln -s $HOME/.mkshrc $HOME/.bashrc
+    fi
   fi
 fi
 
@@ -92,15 +99,25 @@ export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
 export PATH="$PREFIX/bin:/system/bin:/sbin:/vendor/bin:/system/sbin:/system/xbin:/system/product/bin:/system/usr/share/bin-get/bin:/system/system_ext/bin"
 
+if [ -f "$PREFIX/etc/profile.d/sudo.sh" ]; then
+  printf "\e[35m┌─\e[0m Old \e[92m\e[4msudo\e[0m has been found in\n"
+  printf "\e[35m├─\e[0m \e[93m\e[4m$PREFIX/etc/profile.d/sudo.sh\e[0m\n"
+  printf "\e[35m└─\e[0m Please remove it to use the new \e[92m\e[4msudo\e[0m\n"
+fi
+
 if [ -d "/data/chuser/$USER" ]; then
-  # Loads user defined scripts
+  # Loads user defined scripts and environment variables
   for script in $PREFIX/etc/profile.d/*.sh; do
     if [ -f $script ]; then
-      . $script
+      source $script
     fi
   done
-
-  unset script
+  for envscript in $PREFIX/etc/env.d/*.sh; do
+    if [ -f $envscript ]; then
+      source $envscript
+    fi
+  done
+  unset script envscript
 
   if [ ! -f "$PREFIX/etc/mkshrc" ]; then
     ln -s $HOME/.mkshrc $PREFIX/etc/mkshrc
@@ -108,14 +125,14 @@ if [ -d "/data/chuser/$USER" ]; then
 
   # Keep the storage clear and use user based mkshrc
   if [ -f "$HOME/.mkshrc" ]; then
-    . $HOME/.mkshrc
+    # $HOME/.bashrc is the same. Do not import.
+    source $HOME/.mkshrc
   fi
 fi
 
-# Modules should not able to manipulate the entire mkshrc
-for rc in /system/etc/mkshrc.d/*.d.sh; do
+for rc in /system/etc/mkshrc.d/*.sh; do
   if [ -f $rc ]; then
-    . $rc
+    source $rc
   fi
 done
 
