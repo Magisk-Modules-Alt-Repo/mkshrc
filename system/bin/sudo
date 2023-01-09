@@ -1,0 +1,19 @@
+#!/system/bin/sh
+source $MKLIB/console/ui_print.sh
+source $MKLIB/console/abort.sh
+
+for p in /sbin/su /system/sbin/su /system/bin/su /system/xbin/su /su/bin/su /magisk/.core/bin/su; do
+    if [ -x $p ]; then
+        # The su tool may require programs in PATH:
+        if [ $# -eq 0 ]; then
+            ui_print white "Usage: sudo [...COMMANDS]"
+        else
+            PATH="$PATH:/sbin:/sbin/su:/su/bin:/su/xbin:/system/bin:/system/xbin" exec $p -p -c "$@"
+        fi
+    fi
+done
+
+abort 1 """No su program found on this device. Mkshrc
+does not supply tools for rooting, see e.g.
+$(ui_print yellow "http://www.androidcentral.com/root") for
+information about rooting Android."""

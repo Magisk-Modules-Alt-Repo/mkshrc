@@ -33,8 +33,6 @@ source $MKLIB/<folder>/<file>.sh
 
 #### core/installed
 
-> ⚠️ This file includes insecure methods
-
 Check if mkshrc is installed
 
 ```shell
