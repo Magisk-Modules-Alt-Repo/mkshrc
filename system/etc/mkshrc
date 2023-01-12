@@ -21,7 +21,7 @@ export EXTERNAL_STORAGE="/sdcard"
 export ASEC_MOUNTPOINT="/mnt/asec"
 
 # FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#ld_library_path-problems
-export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
+# export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
 # export ANDROID_BOOTLOGO="1"
 export ANDROID_ROOT="/system"
 export ANDROID_ASSETS="/system/app"
