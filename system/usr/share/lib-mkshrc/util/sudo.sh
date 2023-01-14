@@ -1,4 +1,4 @@
 # Usage: sudo [command]
 function sudo {
-  su -c "$@"
+  su -p -c "$@"
 }

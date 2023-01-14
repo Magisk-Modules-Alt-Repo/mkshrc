@@ -76,6 +76,8 @@ if [ ! -d "/data/chuser/$USER" ]; then
 
   if [ ! -d "$PREFIX/etc/profile.d" ]; then
     mkdir $PREFIX/etc/profile.d
+    ln -s $MKLIB/util/ppsu.sh $PREFIX/etc/profile.d/ppsu.sh
+    ln -s $MKLIB/util/sudo.sh $PREFIX/etc/profile.d/sudo.sh
   fi
 
   if [ ! -d "$PREFIX/etc/env.d" ]; then
@@ -98,12 +100,6 @@ export TMPDIR="$PREFIX/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
 export PATH="$PREFIX/bin:/system/bin:/sbin:/vendor/bin:/system/sbin:/system/xbin:/system/product/bin:/system/usr/share/bin-get/bin:/system/system_ext/bin"
-
-if [ -f "$PREFIX/etc/profile.d/sudo.sh" ]; then
-  printf "\e[35m┌─\e[0m Old \e[92m\e[4msudo\e[0m has been found in\n"
-  printf "\e[35m├─\e[0m \e[93m\e[4m$PREFIX/etc/profile.d/sudo.sh\e[0m\n"
-  printf "\e[35m└─\e[0m Please remove it to use the new \e[92m\e[4msudo\e[0m\n"
-fi
 
 if [ -d "/data/chuser/$USER" ]; then
   # Loads user defined scripts and environment variables
