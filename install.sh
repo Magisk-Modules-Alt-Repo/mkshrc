@@ -136,13 +136,13 @@ MODULES=$(magisk --path)/.magisk/modules
 
 require_modules() {
     for module in $@; do
-        [ ! -d "$MODULES/$module" ] && echo "$MODULES/$module is missing, please install it to use this module."
+        [ ! -d "$MODULES/$module" ] && abort "$module is missing, please install it to use this module."
     done
 }
 
 conflicting_modules() {
     for module in $@; do
-        [ -d "$MODULES/$module" ] && echo "$MODULES/$module is installed, please remove it to use this module."
+        [ -d "$MODULES/$module" ] && abort "$module is installed, please remove it to use this module."
     done
 }
 
@@ -167,7 +167,7 @@ on_install() {
 set_permissions() {
     # The following is the default rule, DO NOT remove
     set_perm_recursive $MODPATH 0 0 0755 0644
-
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/xh 0 0 0755
     # Here are some examples:
     # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644
     # set_perm  $MODPATH/system/bin/app_process32   0     2000    0755      u:object_r:zygote_exec:s0

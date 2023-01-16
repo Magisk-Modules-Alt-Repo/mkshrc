@@ -8,7 +8,8 @@
 
 unset PATH HOME PREFIX
 
-export MKLIB="/system/usr/share/lib-mkshrc"
+export MKLIB="/system/usr/share/lib-mkshrc/lib"
+export MKBIN="/system/usr/share/lib-mkshrc/bin"
 # export ANDROID_BOOTLOGO="1"
 export ANDROID_ROOT="/system"
 export ANDROID_ASSETS="/system/app"
@@ -47,6 +48,10 @@ export HISTCONTROL="ignoreboth"
 export HISTSIZE="1000"
 export HISTFILESIZE="2000"
 export HISTFILE="$HOME/.mksh_history"
+
+##############
+# Environment creation // START
+##############
 
 if [ ! -d "/data/chuser/$USER" ]; then
   mkdir -p /data/chuser/$USER
@@ -90,7 +95,14 @@ if [ ! -d "/data/chuser/$USER" ]; then
       ln -s $HOME/.mkshrc $HOME/.bashrc
     fi
   fi
+
+  ln -s $MKBIN/xh $PREFIX/bin/xh
+  ln -s $MKBIN/xh $PREFIX/bin/xhs
 fi
+
+##############
+# Environment creation // END
+##############
 
 if ((USER_ID)); then MODE_PS1='$'; else MODE_PS1='#'; fi
 PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$MODE_PS1 '

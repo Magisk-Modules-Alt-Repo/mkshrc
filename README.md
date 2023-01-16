@@ -10,6 +10,10 @@ DO SHOULD NOT RUN BASH WITH THIS MODULE
 
 You should after the installation `su` in any terminal, to initialize the user/app folders. Every app has its own folder based on his username (`/data/chuser/root`).
 
+## Important
+
+- Since version **1.2.6 (126)** Mkshrc comes included with [ducaale/xh](https://github.com/ducaale/xh). `curl` and `wget` may not work at all
+
 ## Module mkshrc
 
 Supporting mkshrc for every own magisk module, just simply create `<MODID>/system/etc/mkshrc.d/<name>.d.sh`
@@ -36,7 +40,7 @@ source $MKLIB/<folder>/<file>.sh
 Check if mkshrc is installed
 
 ```shell
-[ ! -d $MKLIB ] && echo "Source fail!" && exit 122;
+[ -z $MKLIB ] && echo "Source fail!" && exit 122;
 ```
 
 #### console/abort
@@ -91,4 +95,20 @@ mkshrc-getenv "TEST_ENV" # output: Yolo
 
 mkshrc-add-path /data/bin \
           /system/bin
+```
+
+## resolf.conf
+
+Cloudflare
+
+```
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+```
+
+Google
+
+```
+nameserver 8.8.4.4
+nameserver 8.8.8.8
 ```
