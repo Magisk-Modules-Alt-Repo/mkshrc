@@ -138,24 +138,12 @@ require_modules() {
     for module in $@; do
         [ ! -d "$MODULES/$module" ] && abort "$module is missing, please install it to use this module."
     done
-    unset module
 }
 
 conflicting_modules() {
     for module in $@; do
         [ -d "$MODULES/$module" ] && abort "$module is installed, please remove it to use this module."
     done
-    unset module
-}
-
-install_extra_bin() {
-    for bin in $@; do
-        if [ -f "$bin" ]; then
-            ui_print "- Installing the right '$bin' binary"
-            mv $bin-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/$bin"
-        fi
-    done
-    unset bin
 }
 
 on_install() {
@@ -169,6 +157,19 @@ on_install() {
 
     # Installing extra binaries
     install_extra_bin jq zip keycheck nano vim vimtutor
+
+    ui_print "- Installing the right 'jq' binary"
+    mv jq-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/jq"
+    ui_print "- Installing the right 'zip' binary"
+    mv zip-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/zip"
+    ui_print "- Installing the right 'keycheck' binary"
+    mv keycheck-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/keycheck"
+    ui_print "- Installing the right 'nano' binary"
+    mv nano-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/nano"
+    ui_print "- Installing the right 'vim' binary"
+    mv vim-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/vim"
+    ui_print "- Installing the right 'vimtutor' binary"
+    mv vimtutor-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/vimtutor"
 
     # Symbolic link for lowercase/UPPERCASE support in terminal
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
