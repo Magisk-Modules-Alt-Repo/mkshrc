@@ -12,7 +12,9 @@ You should after the installation `su` in any terminal, to initialize the user/a
 
 ## Important
 
-- Since version **1.2.6 (126)** Mkshrc comes included with [ducaale/xh](https://github.com/ducaale/xh). `curl` and `wget` may not work at all
+- Since version **1.2.6 (126)** Mkshrc comes included with [ducaale/xh](https://github.com/ducaale/xh). `curl` and `wget` may not work at all.
+- Since version **1.2.7 (127)** Mkshrc comes included with some binaries from [Zackptg5/Cross-Compiled-Binaries-Android](https://github.com/Zackptg5/Cross-Compiled-Binaries-Android). 
+
 
 ## Module mkshrc
 
@@ -97,7 +99,7 @@ mkshrc-add-path /data/bin \
           /system/bin
 ```
 
-## resolf.conf
+## resolv.conf
 
 Cloudflare
 

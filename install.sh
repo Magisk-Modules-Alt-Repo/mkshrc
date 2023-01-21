@@ -138,12 +138,24 @@ require_modules() {
     for module in $@; do
         [ ! -d "$MODULES/$module" ] && abort "$module is missing, please install it to use this module."
     done
+    unset module
 }
 
 conflicting_modules() {
     for module in $@; do
         [ -d "$MODULES/$module" ] && abort "$module is installed, please remove it to use this module."
     done
+    unset module
+}
+
+install_extra_bin() {
+    for bin in $@; do
+        if [ -f "$bin" ]; then
+            ui_print "- Installing the right '$bin' binary"
+            mv $bin-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/$bin"
+        fi
+    done
+    unset bin
 }
 
 on_install() {
@@ -155,9 +167,13 @@ on_install() {
     # Check if one of conflicting modules is installed
     conflicting_modules terminalmods
 
+    # Installing extra binaries
+    install_extra_bin jq zip keycheck nano vim vimtutor
+
     # Symbolic link for lowercase/UPPERCASE support in terminal
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
     # ln -sf node "$MODPATH/system/bin/nodejs"
+
 }
 
 # Only some special files require specific permissions
@@ -168,6 +184,12 @@ set_permissions() {
     # The following is the default rule, DO NOT remove
     set_perm_recursive $MODPATH 0 0 0755 0644
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/xh 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/jq 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/zip 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/keycheck 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/nano 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/vim 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/vimtutor 0 0 0755
     # Here are some examples:
     # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644
     # set_perm  $MODPATH/system/bin/app_process32   0     2000    0755      u:object_r:zygote_exec:s0

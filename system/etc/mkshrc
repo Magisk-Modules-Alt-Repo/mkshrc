@@ -62,7 +62,7 @@ if [ ! -d "/data/chuser/$USER" ]; then
   mkdir /data/chuser/$USER
   mkdir $HOME
   mkdir $PREFIX
-  
+
   setperm:insecure /data/chuser/$USER 0 $USERID 0777 u:object_r:magisk_file:s0
 
   # Public directories
@@ -102,8 +102,19 @@ if [ ! -d "/data/chuser/$USER" ]; then
     fi
   fi
 
-  ln -s $MKBIN/xh $PREFIX/bin/xh
+  link_bin() {
+    for bin in $@; do
+      if [ -f "$MKBIN/$bin" ]; then
+        ln -s $MKBIN/$bin $PREFIX/bin/$bin
+      fi
+    done
+    unset bin
+  }
+
+  link_bin xh jq zip keycheck nano vim vimtutor
+  # Needs to be separate linked
   ln -s $MKBIN/xh $PREFIX/bin/xhs
+  unset link_bin
 fi
 
 ##############
