@@ -53,11 +53,17 @@ export HISTFILE="$HOME/.mksh_history"
 # Environment creation // START
 ##############
 
+if [ ! -d "/data/chuser" ]; then
+  mkdir -p /data/chuser
+  setperm:insecure /data/chuser 0 9997 0777 u:object_r:magisk_file:s0
+fi
+
 if [ ! -d "/data/chuser/$USER" ]; then
-  mkdir -p /data/chuser/$USER
-  setperm:insecure /data/chuser 9997 9997 0777
+  mkdir /data/chuser/$USER
   mkdir $HOME
   mkdir $PREFIX
+  
+  setperm:insecure /data/chuser/$USER 0 $USERID 0777 u:object_r:magisk_file:s0
 
   # Public directories
   ln -s /storage/self/primary/Pictures $HOME/Pictures

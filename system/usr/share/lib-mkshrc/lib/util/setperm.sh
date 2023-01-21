@@ -1,6 +1,5 @@
 source $MKLIB/util/sudo.sh
 
-
 # NOTE: This executed as root!
 # USage: setperm:insecure $PREFIX/bin/* $USERID $USERID 0755
 function setperm:insecure {
@@ -12,7 +11,7 @@ function setperm:insecure {
     *"system/vendor/etc/"*) sudo chcon 'u:object_r:vendor_configs_file:s0' $1 ;;
     *"system/vendor/overlay/"*) sudo chcon 'u:object_r:vendor_overlay_file:s0' $1 ;;
     *"system/vendor/"*) sudo chcon 'u:object_r:vendor_file:s0' $1 ;;
-    *"data/chuser/"*) sudo chcon 'u:object_r:system_user_file:s0' $1 ;;
+    *"data/chuser/$USER"*) sudo chcon 'u:object_r:magisk_file:s0' $1 ;;
     *) sudo chcon 'u:object_r:system_file:s0' $1 ;;
     esac
   else
@@ -30,7 +29,7 @@ function setperm {
     *"system/vendor/etc/"*) chcon 'u:object_r:vendor_configs_file:s0' $1 ;;
     *"system/vendor/overlay/"*) chcon 'u:object_r:vendor_overlay_file:s0' $1 ;;
     *"system/vendor/"*) chcon 'u:object_r:vendor_file:s0' $1 ;;
-    *"data/chuser/"*) chcon 'u:object_r:system_user_file:s0' $1 ;;
+    *"data/chuser/$USER"*) chcon 'u:object_r:magisk_file:s0' $1 ;;
     *) chcon 'u:object_r:system_file:s0' $1 ;;
     esac
   else
