@@ -156,8 +156,6 @@ on_install() {
     conflicting_modules terminalmods
 
     # Installing extra binaries
-    install_extra_bin jq zip keycheck nano vim vimtutor
-
     ui_print "- Installing the right 'jq' binary"
     mv jq-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/jq"
     ui_print "- Installing the right 'zip' binary"
