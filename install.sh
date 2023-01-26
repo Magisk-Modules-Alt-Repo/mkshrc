@@ -123,7 +123,7 @@ REPLACE="
 
 print_modname() {
     ui_print "========================================="
-    ui_print "            Systemless mkshrc           "
+    ui_print "            Systemless Mkshrc           "
     ui_print "-----------------------------------------"
     ui_print "      for better Terminal experience     "
     ui_print "to turn your device into a workstation :)"
