@@ -4,17 +4,12 @@ Systemlessly mksh.rc for better Terminal experience to turn your device into a w
 
 # FIRST RUN!
 
-```
-DO SHOULD NOT RUN BASH WITH THIS MODULE
-```
-
 You should after the installation `su` in any terminal, to initialize the user/app folders. Every app has its own folder based on his username (`/data/chuser/root`).
 
 ## Important
 
 - Since version **1.2.6 (126)** Mkshrc comes included with [ducaale/xh](https://github.com/ducaale/xh). `curl` and `wget` may not work at all.
-- Since version **1.2.7 (127)** Mkshrc comes included with some binaries from [Zackptg5/Cross-Compiled-Binaries-Android](https://github.com/Zackptg5/Cross-Compiled-Binaries-Android). 
-
+- Since version **1.2.7 (127)** Mkshrc comes included with some binaries from [Zackptg5/Cross-Compiled-Binaries-Android](https://github.com/Zackptg5/Cross-Compiled-Binaries-Android).
 
 ## Module mkshrc
 
