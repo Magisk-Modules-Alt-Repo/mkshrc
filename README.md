@@ -1,6 +1,6 @@
-# Systemless mkshrc
+# Systemless Mkshrc
 
-Systemlessly mksh.rc for better Terminal experience to turn your device into a workstation :)
+Systemlessly Mkshrc for better Terminal experience to turn your device into a workstation :)
 
 # FIRST RUN!
 

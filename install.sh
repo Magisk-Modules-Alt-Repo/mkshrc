@@ -123,7 +123,7 @@ REPLACE="
 
 print_modname() {
     ui_print "========================================="
-    ui_print "            Systemless mkshrc           "
+    ui_print "            Systemless Mkshrc           "
     ui_print "-----------------------------------------"
     ui_print "      for better Terminal experience     "
     ui_print "to turn your device into a workstation :)"
@@ -182,6 +182,8 @@ on_install() {
 set_permissions() {
     # The following is the default rule, DO NOT remove
     set_perm_recursive $MODPATH 0 0 0755 0644
+    set_perm $MODPATH/system/bin/chsh 0 0 0755
+    set_perm $MODPATH/system/bin/echsh 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/xh 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/jq 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/zip 0 0 0755

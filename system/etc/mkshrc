@@ -53,6 +53,10 @@ export HISTFILE="$HOME/.mksh_history"
 # Environment creation // START
 ##############
 
+function enableExitRc {
+  echo "if [ -d \"\$PREFIX/tmp\" ];then\n  rm -rf \$PREFIX/tmp >/dev/null\n  mkdir \$PREFIX/tmp >/dev/null\nfi" >$PREFIX/etc/exitrc
+}
+
 if [ ! -d "/data/chuser" ]; then
   mkdir -p /data/chuser
   setperm:insecure /data/chuser 0 9997 0777 u:object_r:magisk_file:s0
@@ -83,6 +87,10 @@ if [ ! -d "/data/chuser/$USER" ]; then
     ln -s /data/adb/magisk/busybox $PREFIX/bin/busybox
   else
     echo "Magisk's Busybox was not linked.\nLearn more at https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#magisks-busybox-was-not-linked"
+  fi
+
+  if [ -d "$PREFIX/etc" ]; then
+    enableExitRc
   fi
 
   if [ ! -d "$PREFIX/etc/profile.d" ]; then
@@ -161,5 +169,6 @@ for rc in /system/etc/mkshrc.d/*.sh; do
   fi
 done
 
-cd $HOME
-unset setperm sudo rc setperm:insecure
+# cd $HOME
+
+trap "source $PREFIX/etc/exitrc" EXIT

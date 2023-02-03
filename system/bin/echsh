@@ -1,0 +1,6 @@
+#!/system/bin/chsh
+CMD="""source \$MKLIB/*/*.sh;
+$(cat $1)
+"""
+exec /system/bin/chsh -c "$CMD"
+unset CMD
