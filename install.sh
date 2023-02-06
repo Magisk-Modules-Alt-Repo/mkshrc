@@ -146,6 +146,13 @@ conflicting_modules() {
     done
 }
 
+move_stdout() {
+  mv "$1" "$2"
+  if [ `ui_print $?` -eq 1 ]; then
+    ui_print "? Something went wrong while moving $1 to $2."
+  fi
+}
+
 on_install() {
     # The following is the default implementation: extract $ZIPFILE/system to $MODPATH
     # Extend/change the logic to whatever you want
@@ -156,18 +163,20 @@ on_install() {
     conflicting_modules terminalmods
 
     # Installing extra binaries
-    ui_print "- Installing the right 'jq' binary"
-    mv jq-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/jq"
-    ui_print "- Installing the right 'zip' binary"
-    mv zip-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/zip"
-    ui_print "- Installing the right 'keycheck' binary"
-    mv keycheck-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/keycheck"
-    ui_print "- Installing the right 'nano' binary"
-    mv nano-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/nano"
-    ui_print "- Installing the right 'vim' binary"
-    mv vim-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/vim"
-    ui_print "- Installing the right 'vimtutor' binary"
-    mv vimtutor-$ARCH "$MODPATH/system/usr/share/lib-mkshrc/bin/vimtutor"
+    ui_print "- Installing for $ARCH"
+    
+    if [ -f "/system/bin/bash" ]; then
+      ui_print "- Skipping bash install, already exist"
+    else
+      move_stdout "bash-$ARCH" "$MODPATH/system/bin/bash"
+    fi
+    
+    move_stdout "jq-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/jq"
+    move_stdout "zip-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/zip"
+    move_stdout "keycheck-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/keycheck"
+    move_stdout "nano-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/nano"
+    move_stdout "vim-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/vim"
+    move_stdout "vimtutor-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/vimtutor"
 
     # Symbolic link for lowercase/UPPERCASE support in terminal
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
@@ -182,8 +191,7 @@ on_install() {
 set_permissions() {
     # The following is the default rule, DO NOT remove
     set_perm_recursive $MODPATH 0 0 0755 0644
-    set_perm $MODPATH/system/bin/chsh 0 0 0755
-    set_perm $MODPATH/system/bin/echsh 0 0 0755
+    set_perm $MODPATH/system/bin/bash 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/xh 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/jq 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/zip 0 0 0755

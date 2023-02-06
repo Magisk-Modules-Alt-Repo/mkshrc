@@ -1,0 +1,4 @@
+if [ -f "/system/etc/mkshrc" ]; then
+  source /system/etc/mkshrc
+fi
+export SHELL="/system/bin/bash"
