@@ -165,12 +165,6 @@ on_install() {
     # Installing extra binaries
     ui_print "- Installing for $ARCH"
     
-    if [ -f "/system/bin/bash" ]; then
-      ui_print "- Skipping bash install, already exist"
-    else
-      move_stdout "bash-$ARCH" "$MODPATH/system/bin/bash"
-    fi
-    
     move_stdout "jq-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/jq"
     move_stdout "zip-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/zip"
     move_stdout "keycheck-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/keycheck"
@@ -182,6 +176,12 @@ on_install() {
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
     # ln -sf node "$MODPATH/system/bin/nodejs"
 
+    if [ -f "/system/bin/bash" ]; then
+      ui_print "- Skipping bash install, already exist"
+    else
+      move_stdout "bash-$ARCH" "$MODPATH/system/bin/bash"
+    fi
+    
 }
 
 # Only some special files require specific permissions
