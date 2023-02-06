@@ -35,6 +35,8 @@ source $MKLIB/util/sudo.sh
 source $MKLIB/util/setperm.sh
 source $MKLIB/util/f2c.sh
 
+export PATH="/system/bin:/sbin:/vendor/bin:/system/sbin:/system/xbin:/system/product/bin:/system/usr/share/bin-get/bin:/system/system_ext/bin"
+
 export USER=$(id -un)
 export USERID=$(id -u)
 export HOME="/data/chuser/$USER/home"
@@ -136,7 +138,7 @@ export MKSHRCSYS_INSTALLED="true"
 export TMPDIR="$PREFIX/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
-export PATH="$PREFIX/bin:/system/bin:/sbin:/vendor/bin:/system/sbin:/system/xbin:/system/product/bin:/system/usr/share/bin-get/bin:/system/system_ext/bin"
+export PATH="$PREFIX/bin:$PATH"
 
 if [ -d "/data/chuser/$USER" ]; then
   # Loads user defined scripts and environment variables
