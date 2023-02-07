@@ -32,7 +32,7 @@ export PATH="/system/bin:/sbin:/vendor/bin:/system/sbin:/system/xbin:/system/pro
 
 export USER=$(id -un)
 export USERID=$(id -u)
-export ROOTFS="/data/mkuser__"
+export ROOTFS="/data/mkuser"
 export PREFIX="$ROOTFS/usr"
 # FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#how-to-edit-hostname
 export HOSTNAME=$(uname -n)
