@@ -10,7 +10,8 @@ unset PATH HOME PREFIX
 
 export MKLIB="/system/usr/share/lib-mkshrc/lib"
 export MKBIN="/system/usr/share/lib-mkshrc/bin"
-# export ANDROID_BOOTLOGO="1"
+# FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#ld_library_path-problems
+# export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
 export ANDROID_ROOT="/system"
 export ANDROID_ASSETS="/system/app"
 export ANDROID_DATA="/data"
@@ -19,14 +20,6 @@ export ANDROID_ART_ROOT="/apex/com.android.art"
 export ANDROID_I18N_ROOT="/apex/com.android.i18n"
 export ANDROID_TZDATA_ROOT="/apex/com.android.tzdata"
 export EXTERNAL_STORAGE="/sdcard"
-export ASEC_MOUNTPOINT="/mnt/asec"
-
-# FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#ld_library_path-problems
-# export LD_LIBRARY_PATH="/vendor/lib:/system/lib"
-# export ANDROID_BOOTLOGO="1"
-export ANDROID_ROOT="/system"
-export ANDROID_ASSETS="/system/app"
-export ANDROID_DATA="/data"
 export ASEC_MOUNTPOINT="/mnt/asec"
 export LOOP_MOUNTPOINT="/mnt/obb"
 export BOOTCLASSPATH="/system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/filterfw.jar"
@@ -39,92 +32,97 @@ export PATH="/system/bin:/sbin:/vendor/bin:/system/sbin:/system/xbin:/system/pro
 
 export USER=$(id -un)
 export USERID=$(id -u)
-export HOME="/data/chuser/$USER/home"
-# Deprecated: Please use $PREFIX
-export USR="/data/chuser/$USER/usr"
-export PREFIX="/data/chuser/$USER/usr"
+export ROOTFS="/data/mkuser__"
+export PREFIX="$ROOTFS/usr"
 # FAQ: https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#how-to-edit-hostname
 export HOSTNAME=$(uname -n)
 
 export HISTCONTROL="ignoreboth"
 export HISTSIZE="1000"
 export HISTFILESIZE="2000"
+
+if [ "$USER" = "root" ]; then
+  export HOME="$ROOTFS/root"
+else
+  export HOME="$ROOTFS/home/$USER"
+fi
+
 export HISTFILE="$HOME/.mksh_history"
 
 ##############
 # Environment creation // START
 ##############
 
-function enableExitRc {
-  echo "if [ -d \"\$PREFIX/tmp\" ];then\n  rm -rf \$PREFIX/tmp >/dev/null\n  mkdir \$PREFIX/tmp >/dev/null\nfi" >$PREFIX/etc/exitrc
-}
+if [ ! -d "$ROOTFS" ]; then
+  sudo mkdir $ROOTFS
+  setperm:insecure $ROOTFS 0 9997 0777 u:object_r:magisk_file:s0
 
-if [ ! -d "/data/chuser" ]; then
-  mkdir -p /data/chuser
-  setperm:insecure /data/chuser 0 9997 0777 u:object_r:magisk_file:s0
-fi
-
-if [ ! -d "/data/chuser/$USER" ]; then
-  mkdir /data/chuser/$USER
-  mkdir $HOME
-  mkdir $PREFIX
-
-  setperm:insecure /data/chuser/$USER 0 $USERID 0777 u:object_r:magisk_file:s0
-
-  # Public directories
-  ln -s /storage/self/primary/Pictures $HOME/Pictures
-  ln -s /storage/self/primary/Download $HOME/Download
-  ln -s /storage/self/primary/Movies $HOME/Movies
-  ln -s /storage/self/primary/Music $HOME/Music
-  ln -s /storage/self/primary/Documents $HOME/Documents
-
-  for path in etc bin lib libexec var tmp share opt include; do
-    if [ ! -d "$PREFIX/$path" ]; then
-      mkdir $PREFIX/$path
+  for path in usr opt proc run var home etc dev mnt root tmp; do
+    if [ ! -d "$ROOTFS/$path" ]; then
+      sudo mkdir "$ROOTFS/$path"
+      setperm:insecure "$ROOTFS/$path" 0 0 0755 u:object_r:magisk_file:s0
     fi
   done
 
-  # Add Magisk's Busybox. Only works as root user.
-  if [ "$USER" = "root" ]; then
+  for path2 in bin include lib lib32 lib64 libexec libx32 "local" share; do
+    if [ ! -d "$ROOTFS/usr/$path2" ]; then
+      sudo mkdir "$ROOTFS/usr/$path2"
+      setperm:insecure "$ROOTFS/usr/$path2" 0 0 0755 u:object_r:magisk_file:s0
+    fi
+  done
+
+  for path3 in "profile.d" "env.d"; do
+    if [ ! -d "$ROOTFS/etc/$path3" ]; then
+      sudo mkdir "$ROOTFS/etc/$path3"
+      setperm:insecure "$ROOTFS/etc/$path3" 0 0 0755 u:object_r:magisk_file:s0
+    fi
+  done
+
+  if [ -f "/data/adb/magisk/busybox" ]; then
     ln -s /data/adb/magisk/busybox $PREFIX/bin/busybox
-  else
-    echo "Magisk's Busybox was not linked.\nLearn more at https://github.com/Magisk-Modules-Alt-Repo/mkshrc/wiki/FAQ#magisks-busybox-was-not-linked"
   fi
 
-  if [ -d "$PREFIX/etc" ]; then
-    enableExitRc
+  if [ -d "$ROOTFS/etc" ]; then
+    echo "# Clean up temop files\nfor sdgdfbb in \$ROOTFS/tmp \$HOME/.cache; do\n  if [ -d \"\$sdgdfbb\" ]; then\n    rm -rf \"\$sdgdfbb\" >/dev/null\n    mkdir \"\$sdgdfbb\" >/dev/null\n  fi\ndone" >$ROOTFS/etc/exitrc
   fi
 
-  if [ ! -d "$PREFIX/etc/profile.d" ]; then
-    mkdir $PREFIX/etc/profile.d
-    ln -s $MKLIB/util/ppsu.sh $PREFIX/etc/profile.d/ppsu.sh
-    ln -s $MKLIB/util/sudo.sh $PREFIX/etc/profile.d/sudo.sh
+  if [ -d "$ROOTFS/etc/profile.d" ]; then
+    ln -s $MKLIB/util/ppsu.sh $ROOTFS/etc/profile.d/ppsu.sh
+    ln -s $MKLIB/util/sudo.sh $ROOTFS/etc/profile.d/sudo.sh
   fi
 
-  if [ ! -d "$PREFIX/etc/env.d" ]; then
-    mkdir $PREFIX/etc/env.d
+  for bin in `ls $MKBIN`; do
+    if [ -f "$MKBIN/$bin" ]; then
+      ln -s $MKBIN/$bin $PREFIX/bin/$bin
+    fi
+  done
+
+  # Needs to be separate linked
+  ln -s $MKBIN/xh $PREFIX/bin/xhs
+fi
+
+
+if [ ! -d "$ROOTFS/home/$USER" ]; then
+  if [ ! "$USER" = "root" ]; then
+    sudo mkdir $ROOTFS/home/$USER
+    setperm:insecure $ROOTFS/home/$USER $USERID $USERID 0755 u:object_r:magisk_file:s0
+  fi
+
+  if [ ! "$USER" = "root" ]; then
+    # Public directories
+    ln -s /storage/self/primary/Pictures $HOME/Pictures
+    ln -s /storage/self/primary/Download $HOME/Download
+    ln -s /storage/self/primary/Movies $HOME/Movies
+    ln -s /storage/self/primary/Music $HOME/Music
+    ln -s /storage/self/primary/Documents $HOME/Documents
   fi
 
   if [ ! -f "$HOME/.mkshrc" ]; then
-    echo "# Aliases\nalias bsu='su -p -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'\nalias nano='nano -l'" >$HOME/.mkshrc
+    echo "# Aliases\nalias bsu='su -p -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'\nalias nano='nano -l'\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/.local/bin\" ]; then\n    export PATH=\"\$HOME/.local/bin:\$PATH\"\nfi" >$HOME/.mkshrc
     if [ ! -f "$HOME/.bashrc" ]; then
       ln -s $HOME/.mkshrc $HOME/.bashrc
     fi
   fi
-
-  link_bin() {
-    for bin in $@; do
-      if [ -f "$MKBIN/$bin" ]; then
-        ln -s $MKBIN/$bin $PREFIX/bin/$bin
-      fi
-    done
-    unset bin
-  }
-
-  link_bin xh jq zip keycheck nano vim vimtutor
-  # Needs to be separate linked
-  ln -s $MKBIN/xh $PREFIX/bin/xhs
-  unset link_bin
 fi
 
 ##############
@@ -135,28 +133,24 @@ if ((USER_ID)); then MODE_PS1='$'; else MODE_PS1='#'; fi
 PS1=$'\e[35m┌\e[0m\e[92m$USER@$HOSTNAME\e[0m:\e[38;5;33m${PWD:-?}\e[0m\n\e[35m└─\e[0m$MODE_PS1 '
 
 export MKSHRCSYS_INSTALLED="true"
-export TMPDIR="$PREFIX/tmp"
+export TMPDIR="$ROOTFS/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
 export PATH="$PREFIX/bin:$PATH"
 
-if [ -d "/data/chuser/$USER" ]; then
+if [ -d "$ROOTFS" ]; then
   # Loads user defined scripts and environment variables
-  for script in $PREFIX/etc/profile.d/*.sh; do
+  for script in $ROOTFS/etc/profile.d/*.sh; do
     if [ -f $script ]; then
       source $script
     fi
   done
-  for envscript in $PREFIX/etc/env.d/*.sh; do
+  for envscript in $ROOTFS/etc/env.d/*.sh; do
     if [ -f $envscript ]; then
       source $envscript
     fi
   done
   unset script envscript
-
-  if [ ! -f "$PREFIX/etc/mkshrc" ]; then
-    ln -s $HOME/.mkshrc $PREFIX/etc/mkshrc
-  fi
 
   # Keep the storage clear and use user based mkshrc
   if [ -f "$HOME/.mkshrc" ]; then
@@ -171,6 +165,4 @@ for rc in /system/etc/mkshrc.d/*.sh; do
   fi
 done
 
-# cd $HOME
-
-trap "source $PREFIX/etc/exitrc" EXIT
+trap "source $ROOTFS/etc/exitrc" EXIT

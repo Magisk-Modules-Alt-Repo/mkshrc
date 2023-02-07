@@ -4,7 +4,7 @@ Systemlessly Mkshrc for better Terminal experience to turn your device into a wo
 
 # FIRST RUN!
 
-You should after the installation `su` in any terminal, to initialize the user/app folders. Every app has its own folder based on his username (`/data/chuser/root`).
+You should after the installation `su` in any terminal, to initialize the user/app folders. Every app has its own folder based on his username (`/data/mkuser/home/<USER>`).
 
 ## Important
 
