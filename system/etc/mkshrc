@@ -83,7 +83,7 @@ if [ ! -d "$ROOTFS" ]; then
   fi
 
   if [ -d "$ROOTFS/etc" ]; then
-    echo "# Clean up temop files\nfor sdgdfbb in \$ROOTFS/tmp \$HOME/.cache; do\n  if [ -d \"\$sdgdfbb\" ]; then\n    rm -rf \"\$sdgdfbb\" >/dev/null\n    mkdir \"\$sdgdfbb\" >/dev/null\n  fi\ndone" >$ROOTFS/etc/exitrc
+    echo "# Clean up temop files\nfor sdgdfbb in \$ROOTFS/tmp; do\n  if [ -d \"\$sdgdfbb\" ]; then\n    rm -rf \"\$sdgdfbb\" >/dev/null\n    mkdir \"\$sdgdfbb\" >/dev/null\n  fi\ndone" >$ROOTFS/etc/exitrc
   fi
 
   if [ -d "$ROOTFS/etc/profile.d" ]; then
