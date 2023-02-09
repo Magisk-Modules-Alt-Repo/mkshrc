@@ -63,6 +63,8 @@ if [ ! -d "$ROOTFS" ]; then
       setperm:insecure "$ROOTFS/$path" 0 0 0755 u:object_r:magisk_file:s0
     fi
   done
+  # Needs to be write able
+  setperm:insecure "$ROOTFS/tmp" 0 0 0777 u:object_r:magisk_file:s0
 
   for path2 in bin include lib lib32 lib64 libexec libx32 "local" share; do
     if [ ! -d "$ROOTFS/usr/$path2" ]; then
