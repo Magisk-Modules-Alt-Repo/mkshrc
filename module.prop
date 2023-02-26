@@ -1,6 +1,6 @@
 id=mkshrc
 name=Systemless Mkshrc
-version=1.3.2
-versionCode=132
+version=1.3.3
+versionCode=133
 author=Der_Googler
-description=Systemlessly Mkshrc for better Terminal experience to turn your device into a workstation :)
+description=Systemlessly Mkshrc for better Terminal experience, to turn your device into a workstation :)

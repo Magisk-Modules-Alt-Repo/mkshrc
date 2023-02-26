@@ -11,6 +11,10 @@ You should after the installation `su` in any terminal, to initialize the user/a
 - Since version **1.2.6 (126)** Mkshrc comes included with [ducaale/xh](https://github.com/ducaale/xh). `curl` and `wget` may not work at all.
 - Since version **1.2.7 (127)** Mkshrc comes included with some binaries from [Zackptg5/Cross-Compiled-Binaries-Android](https://github.com/Zackptg5/Cross-Compiled-Binaries-Android).
 
+## Root directory customization
+
+`setprop persist.mkshrc.rootfs /data/<NEW_NAME>`
+
 ## Module mkshrc
 
 Supporting mkshrc for every own magisk module, just simply create `<MODID>/system/etc/mkshrc.d/<name>.d.sh`
