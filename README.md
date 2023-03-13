@@ -1,6 +1,6 @@
 # Systemless Mkshrc
 
-Systemlessly Mkshrc for better Terminal experience to turn your device into a workstation :)
+Pprovide a systemless implementation of mkshrc for a better terminal experience on Android devices.
 
 # FIRST RUN!
 

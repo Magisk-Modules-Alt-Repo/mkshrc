@@ -123,10 +123,10 @@ REPLACE="
 
 print_modname() {
     ui_print "========================================="
-    ui_print "            Systemless Mkshrc           "
+    ui_print "            Systemless Mkshrc            "
     ui_print "-----------------------------------------"
-    ui_print "      for better Terminal experience     "
-    ui_print "to turn your device into a workstation :)"
+    ui_print " Provides a systemless implementation of "
+    ui_print " mkshrc for a better terminal experience "
     ui_print "-----------------------------------------"
     ui_print "      Magisk-Modules-Alt-Repo/mkshrc     "
     ui_print "========================================="
