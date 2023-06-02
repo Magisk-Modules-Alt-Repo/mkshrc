@@ -193,6 +193,7 @@ set_permissions() {
     set_perm_recursive $MODPATH 0 0 0755 0644
     set_perm $MODPATH/system/bin/bash 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/xh 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/open 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/jq 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/zip 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/keycheck 0 0 0755

@@ -101,6 +101,7 @@ if [ ! -d "$ROOTFS" ]; then
 
   # Needs to be separate linked
   ln -s $MKBIN/xh $PREFIX/bin/xhs
+  ln -s $MKBIN/open $PREFIX/bin/xdg-open
 fi
 
 if [ ! -d "$ROOTFS/home/$USER" ]; then

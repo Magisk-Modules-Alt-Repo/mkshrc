@@ -113,3 +113,14 @@ Google
 nameserver 8.8.4.4
 nameserver 8.8.8.8
 ```
+
+# Troubleshooting
+
+## xdg-open was not found
+
+Already created app environments before `1.3.5` need manually link the `xdg-open` binary to thier current environment.
+
+Run this command in your selected app environment
+```bash
+ln -s $MKBIN/open $PREFIX/bin/xdg-open
+```
