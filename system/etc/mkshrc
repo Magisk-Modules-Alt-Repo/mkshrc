@@ -46,6 +46,7 @@ if [ "$USER" = "root" ]; then
 else
   export HOME="$ROOTFS/home/$USER"
 fi
+export XDG_CONFIG_HOME="$HOME"
 
 export HISTFILE="$HOME/.mksh_history"
 
@@ -101,7 +102,6 @@ if [ ! -d "$ROOTFS" ]; then
 
   # Needs to be separate linked
   ln -s $MKBIN/xh $PREFIX/bin/xhs
-  ln -s $MKBIN/open $PREFIX/bin/xdg-open
 fi
 
 if [ ! -d "$ROOTFS/home/$USER" ]; then
@@ -120,7 +120,7 @@ if [ ! -d "$ROOTFS/home/$USER" ]; then
   fi
 
   if [ ! -f "$HOME/.mkshrc" ]; then
-    echo "# Aliases\nalias bsu='su -p -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'\nalias nano='nano -l'\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/.local/bin\" ]; then\n    export PATH=\"\$HOME/.local/bin:\$PATH\"\nfi" >$HOME/.mkshrc
+    echo "# Aliases\nalias bsu='su -p -s bash'\nalias ls='ls --color=auto'\nalias lsa='ls --color=auto -A'\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/.local/bin\" ]; then\n    export PATH=\"\$HOME/.local/bin:\$PATH\"\nfi" >$HOME/.mkshrc
     if [ ! -f "$HOME/.bashrc" ]; then
       ln -s $HOME/.mkshrc $HOME/.bashrc
     fi
@@ -139,6 +139,7 @@ export TMPDIR="$ROOTFS/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
 export PATH="$PREFIX/bin:$PATH"
+export EGET_CONFIG="/system/etc/egetconfig.toml"
 
 if [ -d "$ROOTFS" ]; then
   # Loads user defined scripts and environment variables
