@@ -165,14 +165,6 @@ on_install() {
     # Installing extra binaries
     ui_print "- Installing for $ARCH"
     
-    # These gets removed in future version
-    move_stdout "jq-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/jq"
-    move_stdout "zip-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/zip"
-    move_stdout "keycheck-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/keycheck"
-    # move_stdout "nano-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/nano"
-    move_stdout "vim-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/vim"
-    move_stdout "vimtutor-$ARCH" "$MODPATH/system/usr/share/lib-mkshrc/bin/vimtutor"
-
     # Symbolic link for lowercase/UPPERCASE support in terminal
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
     # ln -sf node "$MODPATH/system/bin/nodejs"
@@ -194,17 +186,6 @@ set_permissions() {
     set_perm_recursive $MODPATH 0 0 0755 0644
     set_perm $MODPATH/system/bin/bash 0 0 0755
     set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/eget 0 0 0755
-    
-    
-    # These gets removed in future version
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/xh 0 0 0755
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/jq 0 0 0755
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/zip 0 0 0755
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/keycheck 0 0 0755
-    # set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/nano 0 0 0755
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/vim 0 0 0755
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/vimtutor 0 0 0755
-    
     
     # Here are some examples:
     # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644
