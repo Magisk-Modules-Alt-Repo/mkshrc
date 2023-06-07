@@ -99,9 +99,6 @@ if [ ! -d "$ROOTFS" ]; then
       ln -s $MKBIN/$bin $PREFIX/bin/$bin
     fi
   done
-
-  # Needs to be separate linked
-  ln -s $MKBIN/xh $PREFIX/bin/xhs
 fi
 
 if [ ! -d "$ROOTFS/home/$USER" ]; then
@@ -139,7 +136,6 @@ export TMPDIR="$ROOTFS/tmp"
 export TERM="xterm-256color"
 export SHELL="/system/bin/sh"
 export PATH="$PREFIX/bin:$PATH"
-export EGET_CONFIG="/system/etc/egetconfig.toml"
 
 if [ -d "$ROOTFS" ]; then
   # Loads user defined scripts and environment variables

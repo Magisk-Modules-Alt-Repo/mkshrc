@@ -185,7 +185,7 @@ set_permissions() {
     # The following is the default rule, DO NOT remove
     set_perm_recursive $MODPATH 0 0 0755 0644
     set_perm $MODPATH/system/bin/bash 0 0 0755
-    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/eget 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/stew 0 0 0755
     
     # Here are some examples:
     # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644
