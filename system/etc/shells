@@ -2,5 +2,6 @@
 /bin/sh
 /usr/bin/sh
 /system/bin/sh
+/system/bin/bash
 /system/system_ext/bin/bash
 /usr/system_ext/bin/bash

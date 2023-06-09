@@ -1,177 +1,197 @@
-#!/bin/sh
-
-# A word about this shell script:
+##########################################################################################
 #
-# It must work everywhere, including on systems that lack
-# a /bin/bash, map 'sh' to ksh, ksh97, bash, ash, or zsh,
-# and potentially have either a posix shell or bourne
-# shell living at /bin/sh.
+# Magisk Module Installer Script
 #
-# See this helpful document on writing portable shell scripts:
-# http://www.gnu.org/s/hello/manual/autoconf/Portable-Shell.html
+##########################################################################################
+##########################################################################################
 #
-# The only shell it won't ever work on is cmd.exe.
+# Instructions:
+#
+# 1. Place your files into system folder (delete the placeholder file)
+# 2. Fill in your module's info into module.prop
+# 3. Configure and implement callbacks in this file
+# 4. If you need boot scripts, add them into common/post-fs-data.sh or common/service.sh
+# 5. Add your additional or modified system properties into common/system.prop
+#
+##########################################################################################
 
-if [ "x$0" = "xsh" ]; then
-  # run as curl | sh
-  # on some systems, you can just do cat>npm-install.sh
-  # which is a bit cuter.  But on others, &1 is already closed,
-  # so catting to another script file won't do anything.
-  # Follow Location: headers, and fail on errors
-  curl -f -L -s https://www.npmjs.org/install.sh > npm-install-$$.sh
-  ret=$?
-  if [ $ret -eq 0 ]; then
-    (exit 0)
-  else
-    rm npm-install-$$.sh
-    echo "failed to download script" >&2
-    exit $ret
+##########################################################################################
+# Config Flags
+##########################################################################################
+
+# Set to true if you do *NOT* want Magisk to mount
+# any files for you. Most modules would NOT want
+# to set this flag to true
+SKIPMOUNT=false
+
+# Set to true if you need to load system.prop
+PROPFILE=false
+
+# Set to true if you need post-fs-data script
+POSTFSDATA=false
+
+# Set to true if you need late_start service script
+LATESTARTSERVICE=true
+
+##########################################################################################
+# Replace list
+##########################################################################################
+
+# List all directories you want to directly replace in the system
+# Check the documentations for more info why you would need this
+
+# Construct your list in the following format
+# This is an example
+REPLACE_EXAMPLE="
+/system/app/Youtube
+/system/priv-app/SystemUI
+/system/priv-app/Settings
+/system/framework
+"
+
+# Construct your own list here
+REPLACE="
+"
+
+##########################################################################################
+#
+# Function Callbacks
+#
+# The following functions will be called by the installation framework.
+# You do not have the ability to modify update-binary, the only way you can customize
+# installation is through implementing these functions.
+#
+# When running your callbacks, the installation framework will make sure the Magisk
+# internal busybox path is *PREPENDED* to PATH, so all common commands shall exist.
+# Also, it will make sure /data, /system, and /vendor is properly mounted.
+#
+##########################################################################################
+##########################################################################################
+#
+# The installation framework will export some variables and functions.
+# You should use these variables and functions for installation.
+#
+# ! DO NOT use any Magisk internal paths as those are NOT public API.
+# ! DO NOT use other functions in util_functions.sh as they are NOT public API.
+# ! Non public APIs are not guranteed to maintain compatibility between releases.
+#
+# Available variables:
+#
+# MAGISK_VER (string): the version string of current installed Magisk
+# MAGISK_VER_CODE (int): the version code of current installed Magisk
+# BOOTMODE (bool): true if the module is currently installing in Magisk Manager
+# MODPATH (path): the path where your module files should be installed
+# TMPDIR (path): a place where you can temporarily store files
+# ZIPFILE (path): your module's installation zip
+# ARCH (string): the architecture of the device. Value is either arm, arm64, x86, or x64
+# IS64BIT (bool): true if $ARCH is either arm64 or x64
+# API (int): the API level (Android version) of the device
+#
+# Availible functions:
+#
+# ui_print <msg>
+#     print <msg> to console
+#     Avoid using 'echo' as it will not display in custom recovery's console
+#
+# abort <msg>
+#     print error message <msg> to console and terminate installation
+#     Avoid using 'exit' as it will skip the termination cleanup steps
+#
+# set_perm <target> <owner> <group> <permission> [context]
+#     if [context] is empty, it will default to "u:object_r:system_file:s0"
+#     this function is a shorthand for the following commands
+#       chown owner.group target
+#       chmod permission target
+#       chcon context target
+#
+# set_perm_recursive <directory> <owner> <group> <dirpermission> <filepermission> [context]
+#     if [context] is empty, it will default to "u:object_r:system_file:s0"
+#     for all files in <directory>, it will call:
+#       set_perm file owner group filepermission context
+#     for all directories in <directory> (including itself), it will call:
+#       set_perm dir owner group dirpermission context
+#
+##########################################################################################
+##########################################################################################
+# If you need boot scripts, DO NOT use general boot scripts (post-fs-data.d/service.d)
+# ONLY use module scripts as it respects the module status (remove/disable) and is
+# guaranteed to maintain the same behavior in future Magisk releases.
+# Enable boot scripts by setting the flags in the config section above.
+##########################################################################################
+
+# Set what you want to display when installing your module
+
+print_modname() {
+    ui_print "========================================="
+    ui_print "            Systemless Mkshrc            "
+    ui_print "-----------------------------------------"
+    ui_print " Provides a systemless implementation of "
+    ui_print " mkshrc for a better terminal experience "
+    ui_print "-----------------------------------------"
+    ui_print "      Magisk-Modules-Alt-Repo/mkshrc     "
+    ui_print "========================================="
+}
+
+MODULES=$(magisk --path)/.magisk/modules
+
+require_modules() {
+    for module in $@; do
+        [ ! -d "$MODULES/$module" ] && abort "$module is missing, please install it to use this module."
+    done
+}
+
+conflicting_modules() {
+    for module in $@; do
+        [ -d "$MODULES/$module" ] && abort "$module is installed, please remove it to use this module."
+    done
+}
+
+move_stdout() {
+  mv "$1" "$2"
+  if [ `ui_print $?` -eq 1 ]; then
+    ui_print "? Something went wrong while moving $1 to $2."
   fi
-  sh npm-install-$$.sh
-  ret=$?
-  rm npm-install-$$.sh
-  exit $ret
-fi
+}
 
-debug=0
-npm_config_loglevel="error"
-if [ "x$npm_debug" = "x" ]; then
-  (exit 0)
-else
-  echo "running in debug mode."
-  echo "note that this requires bash or zsh."
-  set -o xtrace
-  set -o pipefail
-  npm_config_loglevel="verbose"
-  debug=1
-fi
-export npm_config_loglevel
+on_install() {
+    # The following is the default implementation: extract $ZIPFILE/system to $MODPATH
+    # Extend/change the logic to whatever you want
+    ui_print "- Extracting module files"
+    unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
 
-# make sure that node exists
-node=`which node 2>&1`
-ret=$?
-# if not found, try "nodejs" as it is the case on debian
-if [ $ret -ne 0 ]; then
-  node=`which nodejs 2>&1`
-  ret=$?
-fi
-if [ $ret -eq 0 ] && [ -x "$node" ]; then
-  if [ $debug -eq 1 ]; then
-    echo "found 'node' at: $node"
-    echo -n "version: "
-    $node --version
-    echo ""
-  fi
-  (exit 0)
-else
-  echo "npm cannot be installed without node.js." >&2
-  echo "install node first, and then try again." >&2
-  echo "" >&2
-  exit $ret
-fi
+    # Check if one of conflicting modules is installed
+    conflicting_modules terminalmods
 
-ret=0
-tar="${TAR}"
-if [ -z "$tar" ]; then
-  tar="${npm_config_tar}"
-fi
-if [ -z "$tar" ]; then
-  tar=`which tar 2>&1`
-  ret=$?
-fi
+    # Installing extra binaries
+    ui_print "- Installing for $ARCH"
+    
+    # Symbolic link for lowercase/UPPERCASE support in terminal
+    [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
+    # ln -sf node "$MODPATH/system/bin/nodejs"
 
-if [ $ret -eq 0 ] && [ -x "$tar" ]; then
-  if [ $debug -eq 1 ]; then
-    echo "found 'tar' at: $tar"
-    echo -n "version: "
-    $tar --version
-    echo ""
-  fi
-  ret=$?
-fi
+    if [ -f "/system/bin/bash" ]; then
+      ui_print "- Skipping bash install, already exist"
+    else
+      move_stdout "bash-$ARCH" "$MODPATH/system/bin/bash"
+    fi
+    
+}
 
-if [ $ret -eq 0 ]; then
-  (exit 0)
-else
-  echo "this script requires 'tar', please install it and try again."
-  exit 1
-fi
+# Only some special files require specific permissions
+# This function will be called after on_install is done
+# The default permissions should be good enough for most cases
 
-curl=`which curl 2>&1`
-ret=$?
-if [ $ret -eq 0 ]; then
-  if [ $debug -eq 1 ]; then
-    echo "found 'curl' at: $curl"
-    echo -n "version: "
-    $curl --version | head -n 1
-    echo ""
-  fi
-  (exit 0)
-else
-  echo "this script requires 'curl', please install it and try again."
-  exit 1
-fi
+set_permissions() {
+    # The following is the default rule, DO NOT remove
+    set_perm_recursive $MODPATH 0 0 0755 0644
+    set_perm $MODPATH/system/bin/bash 0 0 0755
+    set_perm $MODPATH/system/usr/share/lib-mkshrc/bin/stew 0 0 0755
+    
+    # Here are some examples:
+    # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644
+    # set_perm  $MODPATH/system/bin/app_process32   0     2000    0755      u:object_r:zygote_exec:s0
+    # set_perm  $MODPATH/system/bin/dex2oat         0     2000    0755      u:object_r:dex2oat_exec:s0
+    # set_perm  $MODPATH/system/lib/libart.so       0     0       0644
+}
 
-# set the temp dir
-TMP="${TMPDIR}"
-if [ "x$TMP" = "x" ]; then
-  TMP="/tmp"
-fi
-TMP="${TMP}/npm.$$"
-rm -rf "$TMP" || true
-mkdir "$TMP"
-if [ $? -ne 0 ]; then
-  echo "failed to mkdir $TMP" >&2
-  exit 1
-fi
-
-BACK="$PWD"
-
-t="${npm_install}"
-if [ -z "$t" ]; then
-  t="latest"
-fi
-
-# need to echo "" after, because Posix sed doesn't treat EOF
-# as an implied end of line.
-url=`(curl -SsL https://registry.npmjs.org/npm/$t; echo "") \
-     | sed -e 's/^.*tarball":"//' \
-     | sed -e 's/".*$//'`
-
-ret=$?
-if [ "x$url" = "x" ]; then
-  ret=125
-  # try without the -e arg to sed.
-  url=`(curl -SsL https://registry.npmjs.org/npm/$t; echo "") \
-       | sed 's/^.*tarball":"//' \
-       | sed 's/".*$//'`
-  ret=$?
-  if [ "x$url" = "x" ]; then
-    ret=125
-  fi
-fi
-if [ $ret -ne 0 ]; then
-  echo "failed to get tarball url for npm/$t" >&2
-  exit $ret
-fi
-
-
-echo "fetching: $url" >&2
-
-cd "$TMP" \
-  && curl -SsL -o npm.tgz "$url" \
-  && $tar -xzf npm.tgz \
-  && cd "$TMP"/package \
-  && echo "removing existing npm" \
-  && "$node" bin/npm-cli.js rm npm -gf --loglevel=silent \
-  && echo "installing npm@$t" \
-  && "$node" bin/npm-cli.js install -gf ../npm.tgz \
-  && cd "$BACK" \
-  && rm -rf "$TMP" \
-  && echo "successfully installed npm@$t"
-
-ret=$?
-if [ $ret -ne 0 ]; then
-  echo "failed!" >&2
-fi
-exit $ret
+# You can add more functions to assist your custom script code
