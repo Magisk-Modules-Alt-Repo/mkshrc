@@ -8,6 +8,7 @@ You should after the installation `su` in any terminal, to initialize the user/a
 
 ## Important
 
+- Many things has been changed in **1.3.6**, so, please read this [pull here](https://github.com/Magisk-Modules-Alt-Repo/mkshrc/pull/6)
 - Since version **1.2.6 (126)** Mkshrc comes included with [ducaale/xh](https://github.com/ducaale/xh). `curl` and `wget` may not work at all.
 - Since version **1.2.7 (127)** Mkshrc comes included with some binaries from [Zackptg5/Cross-Compiled-Binaries-Android](https://github.com/Zackptg5/Cross-Compiled-Binaries-Android).
 
