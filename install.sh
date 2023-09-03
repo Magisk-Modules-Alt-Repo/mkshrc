@@ -132,20 +132,6 @@ print_modname() {
     ui_print "========================================="
 }
 
-MODULES=$(magisk --path)/.magisk/modules
-
-require_modules() {
-    for module in $@; do
-        [ ! -d "$MODULES/$module" ] && abort "$module is missing, please install it to use this module."
-    done
-}
-
-conflicting_modules() {
-    for module in $@; do
-        [ -d "$MODULES/$module" ] && abort "$module is installed, please remove it to use this module."
-    done
-}
-
 move_stdout() {
   mv "$1" "$2"
   if [ `ui_print $?` -eq 1 ]; then
@@ -159,8 +145,8 @@ on_install() {
     ui_print "- Extracting module files"
     unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
 
-    # Check if one of conflicting modules is installed
-    conflicting_modules terminalmods
+    # Check if terminalmods is installed
+    [ -d "$MODPATH/../terminalmods" ] && abort "'terminalmods' is installed, please remove it."
 
     # Installing extra binaries
     ui_print "- Installing for $ARCH"
