@@ -4,7 +4,7 @@ import { useNativeProperties } from "@mmrl/hooks";
 import { BugReport, FolderShared } from "@mui/icons-material";
 import { ListItem, ListItemIcon } from "@mui/material";
 
-function MkshrcConfig(props) {
+function MkshrcConfig() {
   const [rootfs, setRootfs] = useNativeProperties("persist.mkshrc.rootfs", "/data/mkuser");
 
   return (
@@ -32,7 +32,7 @@ function MkshrcConfig(props) {
       <List subheader={<ListSubheader>Project</ListSubheader>}>
 
         <ListItem disablePadding>
-          <ListItemButton onClick={() => window.open("https://github.com/DerGoogler/MMRL/issues")}>
+          <ListItemButton onClick={() => window.open("https://github.com/Magisk-Modules-Alt-Repo/mkshrc")}>
             <ListItemIcon>
               <BugReport />
             </ListItemIcon>
