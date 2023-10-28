@@ -167,4 +167,6 @@ for rc in /system/etc/mkshrc.d/*.sh; do
   fi
 done
 
-trap "source $ROOTFS/etc/exitrc" EXIT
+if [ -f "$ROOTFS/etc/exitrc" ]; then
+  trap "source $ROOTFS/etc/exitrc" EXIT
+fi
