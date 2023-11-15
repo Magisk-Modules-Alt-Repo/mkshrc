@@ -14,12 +14,6 @@ Install [zyedidia/micro](https://github.com/zyedidia/micro)
 stew install zyedidia/micro
 ```
 
-Install Node.js
-
-```shell
-stew install mkget/node
-```
-
 ## Installation
 
 Via [MMRL](https://github.com/DerGoogler/MMRL) or via the [MMRL CLI](https://github.com/DerGoogler/MMRL-CLI)
