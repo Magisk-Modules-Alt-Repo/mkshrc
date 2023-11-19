@@ -1,6 +1,6 @@
 id=mkshrc
 name=Systemless Mkshrc
-version=1.5.8
-versionCode=158
+version=1.5.9
+versionCode=159
 author=Der_Googler
 description=Provide a systemless implementation of mkshrc for a better terminal experience on Android devices.
