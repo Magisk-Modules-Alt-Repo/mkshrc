@@ -1,11 +1,130 @@
 import React from "react";
-import { Page } from "@mmrl/ui";
-import { useNativeProperties } from "@mmrl/hooks";
-import { BugReport, FolderShared } from "@mui/icons-material";
-import { ListItem, ListItemIcon } from "@mui/material";
+import { Page, Toolbar } from "@mmrl/ui";
+import { useNativeProperties, useActivity, useTheme } from "@mmrl/hooks";
+import { BugReport, FolderShared, Person, Save } from "@mui/icons-material";
+import { ListItem, ListItemIcon, TextField } from "@mui/material";
+import { read, write, list } from "@mmrl/sufile";
+
+const def_id = "persist.mkshrc_v2.rootfs"
+const def_rootfs = "/data/mkuser"
+
+function EditorActivity() {
+  const { context, extra } = useActivity();
+  const { theme } = useTheme();
+  const [content, setContent] = React.useState(read(extra.filename))
+
+  const handleSave = () => {
+    if (content) {
+      write(extra.filename, content)
+    }
+  }
+
+  const renderToolbar = () => {
+    return (
+      <Toolbar modifier="noshadow">
+        <Toolbar.Left>
+          <Toolbar.BackButton onClick={context.popPage} />
+        </Toolbar.Left>
+        <Toolbar.Center>{extra.filename}</Toolbar.Center>
+        <Toolbar.Right>
+          <Toolbar.Button icon={Save} onClick={handleSave} />
+        </Toolbar.Right>
+      </Toolbar>
+    );
+  };
+
+  return (
+    <Page renderToolbar={renderToolbar}>
+      <TextField
+        variant="outlined"
+        onChange={(e) => {
+          setContent(e.target.value)
+        }}
+        value={content}
+        sx={{
+          m: 1,
+          height: "calc(100% - 8px)",
+          width: "calc(100% - 8px)",
+          "& label.Mui-focused": {
+            color: theme.palette.primary.main,
+          },
+          "& .MuiInput-underline:after": {
+            borderBottomColor: theme.palette.primary.main,
+          },
+          "& .MuiOutlinedInput-root": {
+            height: "calc(100% - 8px)",
+            width: "calc(100% - 8px)",
+            "&.Mui-focused fieldset": {
+              borderColor: theme.palette.primary.main,
+            },
+          },
+        }}
+        inputProps={{
+          style: {
+            height: "100%",
+          },
+        }}
+        multiline />
+    </Page>
+  )
+}
+
+function EditUsersActivity() {
+  const { context } = useActivity();
+  const [rootfs] = useNativeProperties(def_id, def_rootfs)
+
+  const renderToolbar = () => {
+    return (
+      <Toolbar modifier="noshadow">
+        <Toolbar.Left>
+          <Toolbar.BackButton onClick={context.popPage} />
+        </Toolbar.Left>
+        <Toolbar.Center>Edit users</Toolbar.Center>
+      </Toolbar>
+    );
+  };
+
+  const list_user = React.useMemo(() => list(rootfs + "/home"), [])
+
+  return (
+    <Page renderToolbar={renderToolbar}>
+      <List>
+        <ListItemButton disablePadding onClick={() => {
+          context.pushPage({
+            component: EditorActivity,
+            key: "EditUsersActivity",
+            extra: {
+              filename: rootfs + "/root/.mkshrc"
+            }
+          })
+        }}>
+          <ListItemText primary="root" secondary={rootfs + "/root/.mkshrc"} />
+        </ListItemButton>
+        {list_user.map((user) => {
+          const file = rootfs + "/home/" + user + "/.mkshrc"
+          return (
+            <ListItemButton disablePadding onClick={() => {
+              context.pushPage({
+                component: EditorActivity,
+                key: "EditUsersActivity",
+                extra: {
+                  filename: file
+                }
+              })
+            }}>
+              <ListItemText primary={user} secondary={file} />
+            </ListItemButton>
+          )
+        })}
+      </List>
+    </Page>
+  )
+}
+
 
 function MkshrcConfig() {
-  const [rootfs, setRootfs] = useNativeProperties("persist.mkshrc.rootfs", "/data/mkuser");
+  const { context } = useActivity();
+  const [rootfs, setRootfs] = useNativeProperties(def_id, def_rootfs);
 
   return (
     <Page sx={{ p: 0 }}>
@@ -29,16 +148,30 @@ function MkshrcConfig() {
 
       <Divider />
 
-      <List subheader={<ListSubheader>Project</ListSubheader>}>
+      <List subheader={<ListSubheader>Users</ListSubheader>}>
+        <ListItemButton disablePadding onClick={() => {
+          context.pushPage({
+            component: EditUsersActivity,
+            key: "EditUsersActivity",
+            extra: {}
+          })
+        }}>
+          <ListItemIcon>
+            <Person />
+          </ListItemIcon>
+          <ListItemText primary="Edit user configs" />
+        </ListItemButton>
+      </List>
 
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => window.open("https://github.com/Magisk-Modules-Alt-Repo/mkshrc")}>
-            <ListItemIcon>
-              <BugReport />
-            </ListItemIcon>
-            <ListItemText primary="Report a issue" />
-          </ListItemButton>
-        </ListItem>
+      <Divider />
+
+      <List subheader={<ListSubheader>Project</ListSubheader>}>
+        <ListItemButton disablePadding onClick={() => window.open("https://github.com/Magisk-Modules-Alt-Repo/mkshrc")}>
+          <ListItemIcon>
+            <BugReport />
+          </ListItemIcon>
+          <ListItemText primary="Report a issue" />
+        </ListItemButton>
       </List>
     </Page>
   );

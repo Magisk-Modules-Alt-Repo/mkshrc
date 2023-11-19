@@ -1,0 +1,29 @@
+name: Build Magisk/KernelSU Module
+
+on:
+  push:
+    tags: [ v*.*.* ]
+
+jobs:
+  build:
+    name: Build Module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Apt Dependencies
+        run: |
+          sudo apt update -y && sudo apt upgrade -y
+          sudo apt install zip unzip -y
+
+      - name: Make
+        shell: bash
+        run: |
+          zip -r "mkshrc.zip" * -x ".git" -x "README.md"
+          
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+            files: 'mkshrc.zip'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
