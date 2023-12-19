@@ -55,7 +55,7 @@ export HISTFILE="$HOME/.mksh_history"
 
 if [ ! -d "$ROOTFS" ]; then
   sudo mkdir $ROOTFS
-  setperm:insecure $ROOTFS 0 9997 0777 u:object_r:magisk_file:s0
+  setperm:insecure $ROOTFS 0 9997 1777 u:object_r:magisk_file:s0
 
   for path in usr opt proc run var home etc dev mnt root tmp; do
     if [ ! -d "$ROOTFS/$path" ]; then
@@ -64,7 +64,7 @@ if [ ! -d "$ROOTFS" ]; then
     fi
   done
   # Needs to be write able
-  setperm:insecure "$ROOTFS/tmp" 0 0 0777 u:object_r:magisk_file:s0
+  setperm:insecure "$ROOTFS/tmp" 2000 2000 0777 u:object_r:magisk_file:s0
 
   for path2 in bin include lib lib32 lib64 libexec libx32 "local" share; do
     if [ ! -d "$ROOTFS/usr/$path2" ]; then
@@ -80,8 +80,17 @@ if [ ! -d "$ROOTFS" ]; then
     fi
   done
 
-  if [ -f "/data/adb/magisk/busybox" ]; then
-    ln -s /data/adb/magisk/busybox $PREFIX/bin/busybox
+  MBB="/data/adb/magisk/busybox"
+  KBB="/data/adb/ksu/bin/busybox"
+
+  if [ "$USER" = "root" ]; then
+    if [ -f "$MBB" ]; then
+      ln -s $MBB $PREFIX/bin/busybox
+    else if [ -f "$KBB" ]; then
+      ln -s $KBB $PREFIX/bin/busybox
+    else
+      echo "Unable to link BusyBox"
+    fi
   fi
 
   if [ -d "$ROOTFS/etc" ]; then
@@ -107,7 +116,7 @@ fi
 if [ ! -d "$ROOTFS/home/$USER" ]; then
   if [ ! "$USER" = "root" ]; then
     sudo mkdir $ROOTFS/home/$USER
-    setperm:insecure $ROOTFS/home/$USER $USERID $USERID 0755 u:object_r:magisk_file:s0
+    setperm:insecure $ROOTFS/home/$USER $USERID $USERID 1755 u:object_r:magisk_file:s0
   fi
 
   if [ ! "$USER" = "root" ]; then
