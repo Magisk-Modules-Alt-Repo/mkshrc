@@ -86,7 +86,7 @@ if [ ! -d "$ROOTFS" ]; then
   if [ "$USER" = "root" ]; then
     if [ -f "$MBB" ]; then
       ln -s $MBB $PREFIX/bin/busybox
-    else if [ -f "$KBB" ]; then
+    elif [ -f "$KBB" ]; then
       ln -s $KBB $PREFIX/bin/busybox
     else
       echo "Unable to link BusyBox"
