@@ -2,7 +2,7 @@ import React from "react";
 import { Page, Toolbar } from "@mmrl/ui";
 import { useNativeProperties, useActivity, useTheme } from "@mmrl/hooks";
 import { BugReport, FolderShared, Person, Save } from "@mui/icons-material";
-import { ListItem, ListItemIcon, TextField } from "@mui/material";
+import { ListItemIcon, TextField } from "@mui/material";
 import { read, write, list } from "@mmrl/sufile";
 
 const def_id = "persist.mkshrc_v2.rootfs"
@@ -21,7 +21,10 @@ function EditorActivity() {
 
   const renderToolbar = () => {
     return (
-      <Toolbar modifier="noshadow">
+      <Toolbar modifier="noshadow" sx={{
+        background: "rgb(25,159,75)",
+        background: "linear-gradient(204deg, rgba(25,159,75,1) 0%, rgba(16,16,16,1) 100%)",
+      }}>
         <Toolbar.Left>
           <Toolbar.BackButton onClick={context.popPage} />
         </Toolbar.Left>
@@ -75,7 +78,10 @@ function EditUsersActivity() {
 
   const renderToolbar = () => {
     return (
-      <Toolbar modifier="noshadow">
+      <Toolbar modifier="noshadow" sx={{
+        background: "rgb(25,159,75)",
+        background: "linear-gradient(204deg, rgba(25,159,75,1) 0%, rgba(16,16,16,1) 100%)",
+      }}>
         <Toolbar.Left>
           <Toolbar.BackButton onClick={context.popPage} />
         </Toolbar.Left>
@@ -126,8 +132,22 @@ function MkshrcConfig() {
   const { context } = useActivity();
   const [rootfs, setRootfs] = useNativeProperties(def_id, def_rootfs);
 
+  const renderToolbar = () => {
+    return (
+      <Toolbar modifier="noshadow" sx={{
+        background: "rgb(25,159,75)",
+        background: "linear-gradient(204deg, rgba(25,159,75,1) 0%, rgba(16,16,16,1) 100%)",
+      }}>
+        <Toolbar.Left>
+          <Toolbar.BackButton onClick={context.popPage} />
+        </Toolbar.Left>
+        <Toolbar.Center>Systemless Mkshrc Configure</Toolbar.Center>
+      </Toolbar>
+    );
+  };
+
   return (
-    <Page sx={{ p: 0 }}>
+    <Page renderToolbar={renderToolbar} sx={{ p: 0 }}>
       <List subheader={<ListSubheader>Settings</ListSubheader>}>
         <ListItemDialogEditText
           onSuccess={(val) => {
