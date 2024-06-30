@@ -1,6 +1,6 @@
 import { Page, Toolbar } from "@mmrl/ui";
 import { useActivity, useTheme } from "@mmrl/hooks";
-import { TextField } from "@mui/material";
+import { InputBase } from "@mui/material";
 import { Save } from "@mui/icons-material";
 
 function EditorActivity() {
@@ -37,7 +37,7 @@ function EditorActivity() {
 
   return (
     <Page renderToolbar={renderToolbar}>
-      <TextField
+      <InputBase
         variant="outlined"
         onChange={(e) => {
           setContent(e.target.value);
@@ -45,8 +45,8 @@ function EditorActivity() {
         value={content}
         sx={{
           m: 1,
-          height: "calc(100% - 8px)",
-          width: "calc(100% - 8px)",
+          height: "calc(100% - 16px)",
+          width: "calc(100% - 16px)",
           "& label.Mui-focused": {
             color: theme.palette.primary.main,
           },
@@ -54,8 +54,8 @@ function EditorActivity() {
             borderBottomColor: theme.palette.primary.main,
           },
           "& .MuiOutlinedInput-root": {
-            height: "calc(100% - 8px)",
-            width: "calc(100% - 8px)",
+            height: "calc(100% - 16px)",
+            width: "calc(100% - 16px)",
             "&.Mui-focused fieldset": {
               borderColor: theme.palette.primary.main,
             },
@@ -64,6 +64,7 @@ function EditorActivity() {
         inputProps={{
           style: {
             height: "100%",
+            fontFamily:"monospace",
           },
         }}
         multiline
