@@ -2,7 +2,7 @@
 
 Pprovide a systemless implementation of mkshrc for a better terminal experience on Android devices.
 
-# FIRST RUN!
+# FIRST RUN
 
 You should after the installation `su` in any terminal, to initialize the user/app folders. Every app has its own folder based on his username (`/data/mkuser/home/<USER>`).
 
@@ -24,9 +24,7 @@ mmrl install -y mkshrc
 
 ## Root directory customization
 
-`setprop persist.mkshrc.rootfs /data/<NEW_NAME>`
-
-> In [MMRL](https://github.com/DerGoogler/MMRL) you can use a GUI to change this
+In [MMRL](https://github.com/DerGoogler/MMRL) you can use a GUI to change it
 
 ## Module mkshrc
 
@@ -134,6 +132,7 @@ nameserver 8.8.8.8
 Already created app environments before `1.3.5` need manually link the `xdg-open` binary to thier current environment.
 
 Run this command in your selected app environment
+
 ```bash
 ln -s $MKBIN/open $PREFIX/bin/xdg-open
 ```

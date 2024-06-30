@@ -20,14 +20,12 @@ on_install() {
 
     # Check if conflicts are installed
     [ -d "$MODPATH/../terminalmods" ] && abort "'terminalmods' is installed, please remove it."
-    # [ -d "$MODPATH/../ccbins" ] && abort "'ccbins' is installed, please remove it."
-
     [ -d "$MODPATH/system/bin/" ] || mkdir -p "$MODPATH/system/bin/"
 
     if [ -f "/system/bin/bash" ]; then
       ui_print "- Skipping bash install, already exist"
     else
-      move_stdout "bash-$ARCH" "$MODPATH/system/bin/bash"
+      mv "bash-$ARCH" "$MODPATH/system/bin/bash"
     fi
     
 }
